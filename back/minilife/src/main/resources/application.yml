@@ -10,7 +10,7 @@ spring:
     open-in-view: false
     generate-ddl: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
 
 ssh:
