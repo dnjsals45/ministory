@@ -1,3 +1,10 @@
+ssh:
+  host: ${SSH_HOST}
+  user: ${SSH_USER}
+  port: ${SSH_PORT}
+  pem: ${SSH_PEM}
+  database-port: ${SSH_DATABASE_PORT}
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,10 +19,30 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: ${GITHUB_REDIRECT_URI}
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope:
+              - profile
+              - email
 
-ssh:
-  host: ${SSH_HOST}
-  user: ${SSH_USER}
-  port: ${SSH_PORT}
-  pem: ${SSH_PEM}
-  database-port: ${SSH_DATABASE_PORT}
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /swagger
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
+  api-docs:
+    groups:
+      enabled: true

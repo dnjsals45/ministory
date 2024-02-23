@@ -3,6 +3,7 @@ package seongmin.minilife.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import seongmin.minilife.common.Auditing;
+import seongmin.minilife.common.auth.dto.OAuthAttribute;
 
 @Entity
 @Table(name = "USER")
@@ -24,11 +25,12 @@ public class User extends Auditing {
     private String nickname;
 
     @Column(name = "oauth_id", nullable = false)
-    private Integer oauthId;
+    private String oauthId;
 
     @Column(name = "oauth_provider", nullable = false)
     private String oauthProvider;
 
     @Column(name = "role", nullable = false)
     private String role;
+
 }
