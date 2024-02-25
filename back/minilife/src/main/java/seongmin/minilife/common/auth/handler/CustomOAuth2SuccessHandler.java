@@ -21,8 +21,8 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        log.info("Oauth2 login success: id@{}", oAuth2User.getUserId());
+        log.info("Oauth2 login success: User@{}", oAuth2User.getUserId());
 
-//        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("http://localhost:3000");
     }
 }

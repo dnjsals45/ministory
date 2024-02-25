@@ -39,7 +39,7 @@ public class OAuthAttribute {
 
     public static OAuthAttribute ofGithub(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttribute.builder()
-                .email(attributes.get("login").toString() + "github.com")
+                .email(attributes.get("login").toString() + "@github.com")
                 .nickname(attributes.get("login").toString())
                 .oauthId(attributes.get("id").toString())
                 .oauthProvider("GITHUB")

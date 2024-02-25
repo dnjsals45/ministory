@@ -10,8 +10,13 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import seongmin.minilife.common.auth.handler.CustomOAuth2SuccessHandler;
 import seongmin.minilife.common.auth.service.CustomOauth2UserService;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -19,11 +24,13 @@ import seongmin.minilife.common.auth.service.CustomOauth2UserService;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
+    private List<String> corsOrigins = List.of("http://localhost:3000");
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> corsConfigurationSource())
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests ->
@@ -42,8 +49,18 @@ public class SecurityConfig {
         return new CustomOAuth2SuccessHandler();
     }
 
-//    @Bean
-//    public CustomOauth2UserService customOauth2UserService() {
-//        return new CustomOauth2UserService();
-//    }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(corsOrigins);
+        configuration.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setMaxAge(3600L);
+//        configuration.setExposedHeaders(List.of(SET_COOKIE, "accessToken", AuthConstants.REFRESH_TOKEN.getValue()));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }

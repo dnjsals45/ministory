@@ -32,11 +32,8 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttribute oAuthAttribute = OAuthAttribute.of(userNameAttributeName, oAuth2User.getAttributes(), registrationId);
-
         User user = saveOrUpdate(oAuthAttribute);
-
         oAuthAttribute.updateUserId(user.getId());
-
         return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole())),
                 oAuthAttribute.getAttributes(),
@@ -47,9 +44,8 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private User saveOrUpdate(OAuthAttribute oAuthAttribute) {
-        User user = userRepository.findByNickname(oAuthAttribute.getNickname())
+        User user = userRepository.findByEmail(oAuthAttribute.getEmail())
                 .orElse(oAuthAttribute.toEntity());
-
         if (!user.getOauthProvider().equals(oAuthAttribute.getOauthProvider())) {
             User otherAccount = User.builder()
                     .email(oAuthAttribute.getEmail())
@@ -58,7 +54,6 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .oauthProvider(oAuthAttribute.getOauthProvider())
                     .role(user.getRole())
                     .build();
-
             return userRepository.save(otherAccount);
         }
         return userRepository.save(user);
