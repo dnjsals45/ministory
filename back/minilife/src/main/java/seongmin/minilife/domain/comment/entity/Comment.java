@@ -6,6 +6,8 @@ import seongmin.minilife.common.Auditing;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.user.entity.User;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "COMMENT")
 @Getter
@@ -29,4 +31,16 @@ public class Comment extends Auditing {
     @Column(name = "comment", nullable = false)
     private String comment;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    public Comment update(String comment) {
+        this.comment = comment;
+
+        return this;
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
