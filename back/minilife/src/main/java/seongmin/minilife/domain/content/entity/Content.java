@@ -5,6 +5,8 @@ import lombok.*;
 import seongmin.minilife.common.Auditing;
 import seongmin.minilife.domain.user.entity.User;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "CONTENT")
 @Getter
@@ -32,4 +34,19 @@ public class Content extends Auditing {
 
     @Column(name = "views", nullable = false)
     private Long views;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    public Content update(String title, String body, Boolean complete) {
+        this.title = title;
+        this.body = body;
+        this.complete = complete;
+
+        return this;
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
