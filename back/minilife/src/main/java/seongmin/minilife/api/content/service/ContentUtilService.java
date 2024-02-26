@@ -20,4 +20,8 @@ public class ContentUtilService {
 
         return content;
     }
+
+    public boolean existsByIdAndUserId(Long contentId, Long userId) {
+        return contentRepository.existsByIdAndUserId(contentId, userId);
+    }
 }

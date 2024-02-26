@@ -1,6 +1,5 @@
 package seongmin.minilife.common.jwt.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +13,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import seongmin.minilife.common.exception.AuthErrorException;
 import seongmin.minilife.common.auth.service.CustomUserDetailsService;
 import seongmin.minilife.common.code.AuthErrorCode;
 import seongmin.minilife.common.jwt.provider.TokenProvider;
-import seongmin.minilife.common.response.ErrorResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,6 +45,12 @@ public class CustomJwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (isAnonymousRequest(request)) {
+            log.info("JWT Filter: Anonymous request: {}", request.getRequestURI());
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String accessToken = resolveAccessToken(request, response);
 
         UserDetails userDetails = getUserDetails(accessToken);
@@ -54,6 +59,11 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private boolean isAnonymousRequest(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization");
+
+        return StringUtils.hasText(accessToken);
+    }
 
     private boolean ignoreTokenRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();
@@ -68,15 +78,16 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         return judge.isPresent() || "OPTIONS".equals(method);
     }
 
-    private String resolveAccessToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private String resolveAccessToken(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String accessToken = accessTokenProvider.resolveToken(request);
 
+        log.warn("액세스 토큰 : {}", accessToken);
         if (!StringUtils.hasText(accessToken)) {
-            handleAuthErrorException(response, AuthErrorCode.EMPTY_ACCESS_TOKEN);
+            handleAuthErrorException(AuthErrorCode.EMPTY_ACCESS_TOKEN, "엑세스 토큰이 비어있습니다.");
         }
 
-        if (accessTokenProvider.isTokenExpire(accessToken)) {
-            handleAuthErrorException(response, AuthErrorCode.EXPIRED_ACCESS_TOKEN);
+        if (Boolean.TRUE.equals(accessTokenProvider.isTokenExpire(accessToken))) {
+            handleAuthErrorException(AuthErrorCode.EXPIRED_ACCESS_TOKEN, "만료된 엑세스 토큰입니다.");
         }
 
         return accessToken;
@@ -100,13 +111,9 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     /**
      * JwtFilter 내에서 에러 발생 시 에러 응답 반환
      */
-    private void handleAuthErrorException(HttpServletResponse response, AuthErrorCode errorCode) throws IOException {
-        response.setStatus(errorCode.getHttpStatus().value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        log.warn("JwtFilter Error: {}", errorCode.getMessage());
-
-        String json = new ObjectMapper().writeValueAsString(ErrorResponse.of(errorCode.getMessage()));
-        response.getWriter().write(json);
+    private void handleAuthErrorException(AuthErrorCode errorCode, String errorMessage) throws ServletException {
+        log.warn("AuthErrorException: {}@{}", errorCode.name(), errorMessage);
+        AuthErrorException exception = new AuthErrorException(errorCode, errorMessage);
+        throw new ServletException(exception);
     }
 }
