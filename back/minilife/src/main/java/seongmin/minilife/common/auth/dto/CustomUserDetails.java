@@ -44,6 +44,7 @@ public class CustomUserDetails implements UserDetails {
         return new CustomUserDetails(user.getId(), user.getOauthId(), user.getRole());
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

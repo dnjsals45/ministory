@@ -1,13 +1,13 @@
 package seongmin.minilife.common.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -15,7 +15,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import seongmin.minilife.common.auth.handler.CustomOAuth2SuccessHandler;
 import seongmin.minilife.common.auth.service.CustomOauth2UserService;
+import seongmin.minilife.common.jwt.provider.AccessTokenProvider;
+import seongmin.minilife.common.jwt.provider.TokenProvider;
 
+import java.time.Duration;
 import java.util.List;
 
 @Configuration
@@ -23,6 +26,7 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
     private final CustomOauth2UserService customOauth2UserService;
     private List<String> corsOrigins = List.of("http://localhost:3000");
 
@@ -36,17 +40,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(customOAuth2SuccessHandler())
+                        .successHandler(customOAuth2SuccessHandler)
                         .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
                                 .userService(customOauth2UserService)))
                 ;
 
         return httpSecurity.build();
-    }
-
-    @Bean
-    public CustomOAuth2SuccessHandler customOAuth2SuccessHandler() {
-        return new CustomOAuth2SuccessHandler();
     }
 
     @Bean
