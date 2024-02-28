@@ -13,10 +13,9 @@ const Home = () => {
           <Image
             src={'/logo.jpg'}
             alt="대표 이미지"
-            width={100}
-            height={100}
+            width={400}
+            height={400}
             layout={'responsive'}
-            objectFit="cover"
             className={'rounded-3xl'}
           />
           <span
@@ -30,14 +29,5 @@ const Home = () => {
     </Container>
   );
 };
-
-// export const getStaticProps = async () => {
-//   const posts = allPosts.sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)));
-//   return {
-//     props: {
-//       posts,
-//     },
-//   };
-// };
 
 export default Home;
