@@ -30,11 +30,11 @@ public class OAuthAttribute {
     }
 
     public static OAuthAttribute of(String userNameAttributeName, Map<String, Object> attributes, String registrationId) {
-        switch (registrationId) {
-            case "github": return ofGithub(userNameAttributeName, attributes);
-            case "google": return ofGoogle(userNameAttributeName, attributes);
-        }
-        return null;
+        return switch (registrationId) {
+            case "github" -> ofGithub(userNameAttributeName, attributes);
+            case "google" -> ofGoogle(userNameAttributeName, attributes);
+            default -> null;
+        };
     }
 
     public static OAuthAttribute ofGithub(String userNameAttributeName, Map<String, Object> attributes) {
@@ -61,10 +61,10 @@ public class OAuthAttribute {
     }
 
 
-    public OAuthAttribute updateUserId(Long userId) {
-        this.userId = userId;
-        return this;
-    }
+//    public OAuthAttribute updateUserId(Long userId) {
+//        this.userId = userId;
+//        return this;
+//    }
 
     public User toEntity() {
         return User.builder()

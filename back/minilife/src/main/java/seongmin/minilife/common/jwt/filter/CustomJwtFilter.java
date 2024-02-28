@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.common.exception.AuthErrorException;
 import seongmin.minilife.common.auth.service.CustomUserDetailsService;
 import seongmin.minilife.common.code.AuthErrorCode;
@@ -38,7 +39,8 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        log.warn("request: {}@{}", request.getMethod(), request.getRequestURI());
+//        log.warn("body: {}", request.);
         if (ignoreTokenRequest(request)) {
             log.info("JWT Filter: Ignoring request: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
@@ -53,7 +55,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
         String accessToken = resolveAccessToken(request, response);
 
-        UserDetails userDetails = getUserDetails(accessToken);
+        CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(accessToken);
         setAuthenticationUser(userDetails, request);
 
         filterChain.doFilter(request, response);
@@ -62,7 +64,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     private boolean isAnonymousRequest(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");
 
-        return StringUtils.hasText(accessToken);
+        return !StringUtils.hasText(accessToken);
     }
 
     private boolean ignoreTokenRequest(HttpServletRequest request) {
@@ -81,7 +83,6 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     private String resolveAccessToken(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String accessToken = accessTokenProvider.resolveToken(request);
 
-        log.warn("액세스 토큰 : {}", accessToken);
         if (!StringUtils.hasText(accessToken)) {
             handleAuthErrorException(AuthErrorCode.EMPTY_ACCESS_TOKEN, "엑세스 토큰이 비어있습니다.");
         }
@@ -98,14 +99,14 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         return customUserDetailsService.loadUserByUsername(userId.toString());
     }
 
-    private void setAuthenticationUser(UserDetails userDetails, HttpServletRequest request) {
+    private void setAuthenticationUser(CustomUserDetails userDetails, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities()
         );
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info("Authenticated user: {}", userDetails.getUsername());
+        log.info("Authenticated user: {}", userDetails.getUserId());
     }
 
     /**

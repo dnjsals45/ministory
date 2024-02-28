@@ -28,7 +28,6 @@ public class ContentService {
     public Long createContent(CustomUserDetails userDetails) {
         User user = userUtilService.findById(userDetails.getUserId());
 
-
         Content newContent = Content.builder()
                 .user(user)
                 .title("")

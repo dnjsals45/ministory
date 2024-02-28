@@ -30,6 +30,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
 
-//        response.sendRedirect("http://localhost:3000");
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.sendRedirect("http://localhost:3000");
     }
 }
