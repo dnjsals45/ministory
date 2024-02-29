@@ -1,9 +1,6 @@
 import Container from '@/components/Container';
 import Image from 'next/image';
 import metadata from '@/data/metadata';
-// import RecentPosts from '@/components/RecentPosts';
-// import { allPosts } from 'contentlayer/generated';
-// import { InferGetStaticPropsType } from 'next';
 
 const Home = () => {
   return (
@@ -24,7 +21,6 @@ const Home = () => {
             {metadata.title}
           </span>
         </div>
-        {/*<RecentPosts />*/}
       </div>
     </Container>
   );

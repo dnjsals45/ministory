@@ -3,12 +3,17 @@
 import navlinks from '../data/navlinks';
 import { useRouter } from 'next/navigation';
 import { Button } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 const Nav = () => {
   const router = useRouter();
-  const createPost = async () => {
-    const accessToken = localStorage.getItem('access-token');
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
+  useEffect(() => {
+    setAccessToken(localStorage.getItem('access-token'));
+  }, []);
+
+  const createPost = async () => {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -22,7 +27,7 @@ const Nav = () => {
 
     const response = await fetch('http://localhost:8080/api/v1/contents', requestOptions);
     const responseData = await response.json();
-    return responseData.data; // 22
+    return responseData.data;
   };
 
   const handleClick = async (nav) => {
@@ -35,14 +40,15 @@ const Nav = () => {
   };
 
   return (
-    <nav>
-      {navlinks.map((nav) => (
-        <Button key={nav.title}>
-          <a className={`mr-4`} onClick={() => handleClick(nav)}>
-            {nav.title}
-          </a>
-        </Button>
-      ))}
+    <nav className={'flex justify-end'}>
+      {navlinks.map(
+        (nav) =>
+          (accessToken || nav.title !== '글쓰기') && (
+            <Button key={nav.title} onClick={() => handleClick(nav)}>
+              {nav.title}
+            </Button>
+          ),
+      )}
     </nav>
   );
 };
