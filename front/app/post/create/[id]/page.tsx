@@ -3,6 +3,7 @@
 import Container from '@/components/Container';
 import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
+import NewPost from '@/components/post/NewPost';
 
 const CreatePost = (props) => {
   const id: number = props.params.id;
@@ -75,8 +76,8 @@ const CreatePost = (props) => {
     setTitle(e.target.value);
   };
 
-  const handleBodyChange = (e) => {
-    setBody(e.target.value);
+  const handleBodyChange = (newContent) => {
+    setBody(newContent);
   };
 
   return (
@@ -89,12 +90,7 @@ const CreatePost = (props) => {
           value={title}
           onChange={handleTitleChange}
         />
-        <input
-          type={'text'}
-          placeholder={'글 내용을 입력해주세요'}
-          value={body}
-          onChange={handleBodyChange}
-        />
+        <NewPost onChangeContent={handleBodyChange}></NewPost>
         <Button onClick={handleComplete}>글 생성</Button>
         <Button onClick={handleTemporary}>임시저장</Button>
       </form>

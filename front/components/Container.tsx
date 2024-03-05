@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 
 const Container = (props) => {
   return (
-    <div>
+    <div className={'mr-12 ml-12 pl-12 pr-12'}>
       <Head>
         <title>{metadata.title}</title>
       </Head>

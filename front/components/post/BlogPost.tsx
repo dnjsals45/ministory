@@ -8,7 +8,6 @@ import CardContent from '@mui/material/CardContent';
 // import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
-import { Grid } from '@mui/material';
 
 export default function MediaCard({ id, title, description }) {
   const router = useRouter();

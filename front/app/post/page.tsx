@@ -3,7 +3,7 @@
 import Container from '@/components/Container';
 import { useState, useEffect } from 'react';
 import { ContentItem } from '@/data/RecentContent';
-import BlogPost from '@/components/BlogPost';
+import BlogPost from '@/components/post/BlogPost';
 import { Grid } from '@mui/material';
 
 async function fetchData(): Promise<{ data: { contents: ContentItem[] } }> {
@@ -27,18 +27,26 @@ const Post = () => {
 
   return (
     <Container>
-      <Grid container spacing={3} justifyContent={'center'}>
-        {contents.map((item, index) => (
-          <Grid item xs={12} sm={6} md={4}>
-            <BlogPost
-              key={index}
-              id={item.content.contentId}
-              title={item.content.title}
-              description={item.content.body}
-            ></BlogPost>
-          </Grid>
-        ))}
-      </Grid>
+      <div className={'ml-12 mr-12 pl-12 pr-12 py-12'}>
+        <Grid
+          container
+          spacing={2}
+          direction={'row'}
+          justifyContent={'center'}
+          alignItems={'center'}
+        >
+          {contents.map((item, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <BlogPost
+                key={index}
+                id={item.content.contentId}
+                title={item.content.title}
+                description={item.content.body}
+              ></BlogPost>
+            </Grid>
+          ))}
+        </Grid>
+      </div>
     </Container>
   );
 };
