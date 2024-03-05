@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.repository.ContentRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ContentUtilService {
@@ -23,5 +25,9 @@ public class ContentUtilService {
 
     public boolean existsByIdAndUserId(Long contentId, Long userId) {
         return contentRepository.existsByIdAndUserId(contentId, userId);
+    }
+
+    public List<Content> findAllContents() {
+        return contentRepository.findByCompleteTrue();
     }
 }

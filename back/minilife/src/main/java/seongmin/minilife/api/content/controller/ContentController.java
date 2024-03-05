@@ -21,6 +21,13 @@ import seongmin.minilife.domain.content.dto.ModifyContentReq;
 public class ContentController {
     private final ContentService contentService;
 
+    @Operation(summary = "게시글 페이지 조회", description = "일단은 다 가져오기")
+    @GetMapping("")
+    @PreAuthorize("isAnonymous()")
+    public ResponseEntity<?> getContentsPage() {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage()));
+    }
+
     @Operation(summary = "게시글 1개 조회", description = "content_id가 일치하는 게시글 1개 조회")
     @GetMapping("/{content_id}")
     @PreAuthorize("isAnonymous()")

@@ -14,13 +14,18 @@ public class GetContentRes {
     @Getter
     @AllArgsConstructor
     public static class ResContent {
+        private Long contentId;
         private String title;
         private String body;
         private Boolean complete;
         private Long views;
 
         public static ResContent from(Content content) {
-            return new ResContent(content.getTitle(), content.getBody(), content.getComplete(), content.getViews());
+            return new ResContent(content.getId(), content.getTitle(), content.getBody(), content.getComplete(), content.getViews());
+        }
+
+        public static ResContent from(Content content, String body) {
+            return new ResContent(content.getId(), content.getTitle(), body, content.getComplete(), content.getViews());
         }
     }
 
@@ -36,5 +41,9 @@ public class GetContentRes {
 
     public static GetContentRes from(Content content) {
         return new GetContentRes(ResContent.from(content), ResUser.from(content.getUser()));
+    }
+
+    public static GetContentRes from(Content content, String body) {
+        return new GetContentRes(ResContent.from(content, body), ResUser.from(content.getUser()));
     }
 }
