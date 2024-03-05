@@ -41,13 +41,18 @@ const Nav = () => {
 
   return (
     <nav className={'flex justify-end'}>
-      {navlinks.map(
-        (nav) =>
-          (accessToken || nav.title !== '글쓰기') && (
-            <Button key={nav.title} onClick={() => handleClick(nav)}>
-              {nav.title}
-            </Button>
-          ),
+      {navlinks.map((nav) =>
+        (!accessToken &&
+          (nav.title === 'SignUp' || nav.title === 'Post' || nav.title === 'About Me')) ||
+        (accessToken &&
+          (nav.title === 'LogOut' ||
+            nav.title === '글쓰기' ||
+            nav.title === 'Post' ||
+            nav.title === 'About Me')) ? (
+          <Button key={nav.title} onClick={() => handleClick(nav)}>
+            {nav.title}
+          </Button>
+        ) : null,
       )}
     </nav>
   );
