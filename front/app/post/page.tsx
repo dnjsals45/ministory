@@ -28,21 +28,10 @@ const Post = () => {
   return (
     <Container>
       <div className={'ml-12 mr-12 pl-12 pr-12 py-12'}>
-        <Grid
-          container
-          spacing={2}
-          direction={'row'}
-          justifyContent={'center'}
-          alignItems={'center'}
-        >
+        <Grid container spacing={6} direction={'row'} justifyContent={'left'} alignItems={'center'}>
           {contents.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <BlogPost
-                key={index}
-                id={item.content.contentId}
-                title={item.content.title}
-                description={item.content.body}
-              ></BlogPost>
+              <BlogPost key={index} data={item}></BlogPost>
             </Grid>
           ))}
         </Grid>

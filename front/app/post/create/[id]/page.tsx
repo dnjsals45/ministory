@@ -2,12 +2,14 @@
 
 import Container from '@/components/Container';
 import { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import NewPost from '@/components/post/NewPost';
+import { router } from 'next/client';
+import { useRouter } from 'next/navigation';
 
 const CreatePost = (props) => {
   const id: number = props.params.id;
-  // console.log('props: ', props);
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [accessToken, setAccessToken] = useState<string>();
@@ -36,9 +38,10 @@ const CreatePost = (props) => {
       });
 
       if (response.ok) {
-        console.log('글 작성 성공.');
+        alert('게시글 작성 성공!');
+        router.push('/post');
       } else {
-        console.error('글 작성 실패');
+        alert('게시글 작성 실패....');
       }
     } catch (error) {
       console.error('글 작성 중 오류가 발생했습니다.', error);
@@ -63,9 +66,10 @@ const CreatePost = (props) => {
       });
 
       if (response.ok) {
-        console.log('글 작성 성공.');
+        // alert('게시글 작성 성공!');
+        // router.push('/post');
       } else {
-        console.error('글 작성 실패');
+        // alert('게시글 작성 실패....');
       }
     } catch (error) {
       console.error('글 작성 중 오류가 발생했습니다.', error);
@@ -82,18 +86,18 @@ const CreatePost = (props) => {
 
   return (
     <Container>
-      <h1> 글 작성 </h1>
-      <form>
-        <input
-          type={'text'}
-          placeholder={'제목을 입력해주세요'}
-          value={title}
-          onChange={handleTitleChange}
-        />
-        <NewPost onChangeContent={handleBodyChange}></NewPost>
-        <Button onClick={handleComplete}>글 생성</Button>
-        <Button onClick={handleTemporary}>임시저장</Button>
-      </form>
+      <h1> 제목 </h1>
+      <TextField
+        required
+        id="outlined-required"
+        value={title}
+        placeholder={'제목을 입력해주세요'}
+        onChange={handleTitleChange}
+      />
+      <h1> 본문 </h1>
+      <NewPost onChangeContent={handleBodyChange}></NewPost>
+      <Button onClick={handleComplete}>글 생성</Button>
+      <Button onClick={handleTemporary}>임시저장</Button>
     </Container>
   );
 };

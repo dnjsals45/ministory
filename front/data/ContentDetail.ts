@@ -4,6 +4,7 @@ interface Content {
   body: string;
   complete: boolean;
   views: number;
+  createdAt: Date;
 }
 
 interface User {

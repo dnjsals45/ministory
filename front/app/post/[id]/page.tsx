@@ -4,6 +4,8 @@ import Container from '@/components/Container';
 import { useEffect, useState } from 'react';
 import { ContentDetail } from '@/data/ContentDetail';
 import dynamic from 'next/dynamic';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import PostTitle from '@/components/post/PostTitle';
 
 const Viewer = dynamic(() => import('@toast-ui/react-editor').then((module) => module.Viewer), {
   ssr: false,
@@ -36,11 +38,18 @@ const ContentDetail = (props) => {
 
   return (
     <Container>
-      <div className={'ml-12 mr-12 pl-12 pr-12 py-12'}>
-        <h1 className={'font-bold text-6xl'}>{detail?.content.title}</h1>
-      </div>
-      <div className={'ml-12 mr-12 pl-12 pr-12 py-12'}>
-        {!loading && <Viewer initialValue={detail?.content.body} />}
+      <div className={'ml-12 mr-12 px-12 py-12'}>
+        <div className={'py-2 mb-6'}>
+          <PostTitle
+            title={detail?.content.title}
+            date={'2024-03-06'}
+            views={detail?.content.views}
+          />
+        </div>
+        <div className={'px-6 py-6 mb-6 bg-slate-50'}>
+          {!loading && <Viewer initialValue={detail?.content.body} />}
+        </div>
+        <div className={'pt-5'}>댓글달기~</div>
       </div>
     </Container>
   );
