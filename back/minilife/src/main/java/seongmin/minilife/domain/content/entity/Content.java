@@ -26,7 +26,7 @@ public class Content extends Auditing {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "body")
+    @Column(name = "body", length = 2000)
     private String body;
 
     @Column(name = "complete", nullable = false)

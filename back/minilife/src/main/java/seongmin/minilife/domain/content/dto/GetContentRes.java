@@ -5,6 +5,8 @@ import lombok.Getter;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.user.entity.User;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 public class GetContentRes {
@@ -19,13 +21,20 @@ public class GetContentRes {
         private String body;
         private Boolean complete;
         private Long views;
+        private LocalDateTime createdAt;
 
         public static ResContent from(Content content) {
-            return new ResContent(content.getId(), content.getTitle(), content.getBody(), content.getComplete(), content.getViews());
+            return new ResContent(content.getId(), content.getTitle(), content.getBody(), content.getComplete(), content.getViews(), content.getCreatedAt());
         }
 
         public static ResContent from(Content content, String body) {
-            return new ResContent(content.getId(), content.getTitle(), body, content.getComplete(), content.getViews());
+            String limited;
+            if (body.length() >= 200) {
+                limited = body.substring(0, 197) + "...";
+            } else {
+                limited = body;
+            }
+            return new ResContent(content.getId(), content.getTitle(), limited, content.getComplete(), content.getViews(), content.getCreatedAt());
         }
     }
 
