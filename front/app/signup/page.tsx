@@ -2,14 +2,18 @@
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useRouter } from 'next/navigation';
 import * as process from 'process';
 
 const SignUp = () => {
-  const router = useRouter();
-
   const handleGoogleLogin = () => {
-    router.push('http://localhost:8080/oauth2/authorization/google');
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const googleRedirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
+    window.location.href =
+      'https://accounts.google.com/o/oauth2/auth?client_id=' +
+      googleClientId +
+      '&redirect_uri=' +
+      googleRedirectUri +
+      '&response_type=code&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
   };
 
   const handleGithubLogin = async () => {
