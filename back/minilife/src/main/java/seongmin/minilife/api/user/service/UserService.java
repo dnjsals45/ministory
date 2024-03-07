@@ -55,7 +55,7 @@ public class UserService {
     }
 
     private String getCodeFromGoogle() {
-        return null;
+        return String.format("https://accounts.google.com/o/oauth2/auth?client_id=%s&redirect_uri=%s&response_type=token&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile", googleClientId, googleRedirectUri);
     }
 
     private String getCodeFromGithub() {
@@ -91,7 +91,32 @@ public class UserService {
     }
 
     public String getAccessTokenFromGoogle(String authorizationCode) {
-        return null;
+        String tokenUrl = "https://oauth2.googleapis.com/token";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Accept", "application/json");
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", googleClientId);
+        body.add("client_secret", googleClientSecret);
+        body.add("code", authorizationCode);
+        body.add("redirect_uri", googleRedirectUri);
+        body.add("grant_type", "authorization_code");
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, httpHeaders);
+
+        ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                tokenUrl,
+                HttpMethod.POST,
+                requestEntity,
+                Map.class
+        );
+
+        Map<String, String> response = responseEntity.getBody();
+        String accessToken = response.get("access_token");
+
+        return accessToken;
     }
 
     public JwtTokenInfo loginWithGithub(String accessToken) {
@@ -117,13 +142,42 @@ public class UserService {
 
         User user = userRepository.findByOauthId(githubId).orElse(null); // orElse 구문에 setNewUser(response)을 넣었더니 왜 중복으로 계속 저장할까?
         if (user == null) { // 일단은 user == null 로 해결
-            setNewUser(response);
+            user = setGithubNewUser(response);
         }
 
         return JwtTokenInfo.from(user);
     }
 
-    private User setNewUser(Map<String, ?> response) {
+    public JwtTokenInfo loginWithGoogle(String accessToken) {
+        String apiUrl = "https://www.googleapis.com/oauth2/v3/userinfo";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Accept", "application/json");
+        httpHeaders.setBearerAuth(accessToken);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, httpHeaders);
+
+        ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                requestEntity,
+                Map.class
+        );
+
+        Map<String, ?> response = responseEntity.getBody();
+        String googleId = response.get("sub").toString();
+
+        User user = userRepository.findByOauthId(googleId).orElse(null); // orElse 구문에 setNewUser(response)을 넣었더니 왜 중복으로 계속 저장할까?
+        if (user == null) { // 일단은 user == null 로 해결
+            user = setGoogleNewUser(response);
+        }
+
+        return JwtTokenInfo.from(user);
+    }
+
+    private User setGithubNewUser(Map<String, ?> response) {
         User newUser = User.builder()
                 .email(response.get("login").toString() + "@github.com")
                 .nickname(response.get("login").toString())
@@ -136,7 +190,17 @@ public class UserService {
         return newUser;
     }
 
-    public JwtTokenInfo loginWithGoogle(String authorizationCode) {
-        return null;
+    private User setGoogleNewUser(Map<String, ?> response) {
+        String email = response.get("email").toString();
+        User newUser = User.builder()
+                .email(email)
+                .nickname(email.substring(0, email.indexOf('@')))
+                .oauthId(response.get("sub").toString())
+                .oauthProvider("google")
+                .role("ROLE_MEMBER")
+                .build();
+
+        userRepository.save(newUser);
+        return newUser;
     }
 }

@@ -65,7 +65,7 @@ public class UserController {
         JwtTokenInfo tokenInfo;
         switch (provider) {
             case "github" -> tokenInfo = userService.loginWithGithub(authorizationToken);
-            case "google" -> tokenInfo = userService.loginWithGoogle(authorizationCode);
+            case "google" -> tokenInfo = userService.loginWithGoogle(authorizationToken);
             default -> throw new IllegalArgumentException("존재하지 않는 provider");
         }
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
