@@ -9,10 +9,12 @@ import { useRouter } from 'next/navigation';
 import RecentPostTitle from '@/components/post/RecentPostTitle';
 import { Grid } from '@mui/material';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+
 export default function MediaCard({ data }) {
   const router = useRouter();
   const moveContentDetail = () => {
-    router.push(`/post/${data.content.id}`);
+    router.push(`/post/${data.content.contentId}`);
   };
 
   const handleIconClick = (event) => {
@@ -41,5 +43,3 @@ export default function MediaCard({ data }) {
     </Card>
   );
 }
-
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';

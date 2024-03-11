@@ -4,7 +4,6 @@ import Container from '@/components/Container';
 import { useEffect, useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import NewPost from '@/components/post/NewPost';
-import { router } from 'next/client';
 import { useRouter } from 'next/navigation';
 
 const CreatePost = (props) => {
@@ -66,10 +65,9 @@ const CreatePost = (props) => {
       });
 
       if (response.ok) {
-        // alert('게시글 작성 성공!');
-        // router.push('/post');
+        alert('임시저장 성공!');
       } else {
-        // alert('게시글 작성 실패....');
+        alert('임시저장 실패....');
       }
     } catch (error) {
       console.error('글 작성 중 오류가 발생했습니다.', error);

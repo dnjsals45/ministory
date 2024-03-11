@@ -23,6 +23,6 @@ const GithubCallback = () => {
     fetchData();
   }, []);
 
-  return null; // 혹은 원하는 다른 JSX
+  return null;
 };
 export default GithubCallback;
