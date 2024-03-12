@@ -1,6 +1,8 @@
 package seongmin.minilife.api.content.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,9 +61,10 @@ public class ContentService {
         content.softDelete();
     }
 
-    public AllContentsRes getContentsPage() {
-        List<Content> contents = contentUtilService.findAllContents();
+    public AllContentsRes getContentsPage(Long pageNum) {
+        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5));
+        List<Content> contents = contentsPage.getContent();
 
-        return AllContentsRes.from(contents);
+        return AllContentsRes.from(contents, contentsPage.getTotalPages() - 1);
     }
 }

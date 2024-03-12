@@ -21,16 +21,24 @@ import seongmin.minilife.domain.content.dto.ModifyContentReq;
 public class ContentController {
     private final ContentService contentService;
 
-    @Operation(summary = "게시글 페이지 조회", description = "일단은 다 가져오기")
+    @Operation(summary = "최근 게시물 12개 조회", description = "9개까지만 보여주기")
+    @GetMapping("/recent")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getRecentContent() {
+        return ResponseEntity.ok().body(SuccessResponse.noContent());
+    }
+
+    @Operation(summary = "게시글 페이지 조회(페이징 기능)", description = "페이지 번호에 맞게 가져오기")
     @GetMapping("")
-    @PreAuthorize("isAnonymous()")
-    public ResponseEntity<?> getContentsPage() {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage()));
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getContentsPage(@RequestParam(name = "page") Long pageNum) {
+        pageNum = pageNum == null ? 1 : pageNum;
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage(pageNum)));
     }
 
     @Operation(summary = "게시글 1개 조회", description = "content_id가 일치하는 게시글 1개 조회")
     @GetMapping("/{content_id}")
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> getContent(@Parameter(name = "content_id", description = "게시글 번호")
                                         @PathVariable(name = "content_id") Long contentId) {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(contentId)));

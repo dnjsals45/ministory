@@ -23,7 +23,7 @@ public class CommentController {
 
     @Operation(summary = "댓글 1개 조회", description = "content_id 게시글의 모든 댓글 조회")
     @GetMapping("")
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> getComments(@Parameter(name = "content_id", description = "게시글 번호")
                                          @PathVariable(name = "content_id") Long contentId) {
         return ResponseEntity.ok().body(SuccessResponse.from(commentService.getComments(contentId)));

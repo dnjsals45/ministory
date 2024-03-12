@@ -1,6 +1,8 @@
 package seongmin.minilife.api.content.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.repository.ContentRepository;
@@ -29,5 +31,9 @@ public class ContentUtilService {
 
     public List<Content> findAllContents() {
         return contentRepository.findByCompleteTrue();
+    }
+
+    public Page<Content> findContentPages(Pageable pageable) {
+        return contentRepository.findByCompleteTrue(pageable);
     }
 }

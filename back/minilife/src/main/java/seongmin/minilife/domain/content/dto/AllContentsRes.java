@@ -15,10 +15,12 @@ import java.util.List;
 @AllArgsConstructor
 public class AllContentsRes {
     private List<GetContentRes> contents;
+    private int totalPage;
 
-    public static AllContentsRes from(List<Content> contents) {
+    public static AllContentsRes from(List<Content> contents, int totalPage) {
         AllContentsRes response = AllContentsRes.builder()
                 .contents(new ArrayList<>())
+                .totalPage(totalPage)
                 .build();
 
         for (Content content : contents) {
