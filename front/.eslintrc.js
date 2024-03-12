@@ -1,34 +1,42 @@
 module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
   env: {
-    // 전역 변수 사용을 정의합니다. 추가하지 않으면 ESLint 규칙에 걸리게 됩니다.
     browser: true,
-    es6: true,
+    amd: true,
     node: true,
+    es6: true,
   },
+  plugins: ['@typescript-eslint'],
   extends: [
     'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended', // 해당 플러그인의 권장 규칙을 사용합니다.
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:jsx-a11y/recommended',
     'plugin:prettier/recommended',
     'next',
+    'next/core-web-vitals',
   ],
-  parser: '@typescript-eslint/parser', // ESLint 파서를 지정합니다.
   parserOptions: {
-    ecmaFeatures: {
-      jsx: true, // JSX를 파싱할 수 있습니다.
-    },
-    ecmaVersion: 12, // Modern ECMAScript를 파싱할 수 있습니다.
-    sourceType: 'module', // import, export를 사용할 수 있습니다.
+    project: true,
+    tsconfigRootDir: __dirname,
   },
-  plugins: ['react', '@typescript-eslint'],
   rules: {
-    // ESLint 규칙을 지정합니다. extends에서 지정된 규칙을 덮어 쓸수도 있습니다.
+    'prettier/prettier': 'error',
     'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'off',
+    'jsx-a11y/anchor-is-valid': [
+      'error',
+      {
+        components: ['Link'],
+        specialLink: ['hrefLeft', 'hrefRight'],
+        aspects: ['invalidHref', 'preferButton'],
+      },
+    ],
+    'react/prop-types': 0,
+    '@typescript-eslint/no-unused-vars': 0,
+    'react/no-unescaped-entities': 0,
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
-  settings: {
-    react: {
-      version: 'detect', // 현재 사용하고 있는 react 버전을 eslint-plugin-react가 자동으로 감지합니다.
-    },
-  },
-};
+}

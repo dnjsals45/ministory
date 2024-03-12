@@ -1,16 +1,16 @@
-import React, { useRef } from 'react';
-import { Editor } from '@toast-ui/react-editor';
-import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import 'tui-color-picker/dist/tui-color-picker.css';
-import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
+import React, { useRef } from 'react'
+import { Editor } from '@toast-ui/react-editor'
+import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import 'tui-color-picker/dist/tui-color-picker.css'
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css'
 
 interface MyEditorProps {
-  onChangeContent: (newContent: string) => void;
+  onChangeContent: (newContent: string) => void
 }
 
 const MyEditor: React.FC<MyEditorProps> = ({ onChangeContent }) => {
-  const editorRef = useRef<Editor | null>(null);
+  const editorRef = useRef<Editor | null>(null)
   const toolbarItems = [
     ['heading', 'bold', 'italic', 'strike'],
     ['hr'],
@@ -19,15 +19,15 @@ const MyEditor: React.FC<MyEditorProps> = ({ onChangeContent }) => {
     ['image'],
     ['code'],
     ['scrollSync'],
-  ];
+  ]
 
   const handleContentChange = () => {
     if (editorRef.current) {
-      const editorIns = editorRef.current.getInstance();
-      const contentHtml = editorIns.getHTML();
-      onChangeContent(contentHtml); // 상위 컴포넌트로 에디터의 내용을 전달합니다.
+      const editorIns = editorRef.current.getInstance()
+      const contentHtml = editorIns.getHTML()
+      onChangeContent(contentHtml) // 상위 컴포넌트로 에디터의 내용을 전달합니다.
     }
-  };
+  }
 
   return (
     <>
@@ -45,7 +45,7 @@ const MyEditor: React.FC<MyEditorProps> = ({ onChangeContent }) => {
         onChange={handleContentChange}
       />
     </>
-  );
-};
+  )
+}
 
-export default MyEditor;
+export default MyEditor
