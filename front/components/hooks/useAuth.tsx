@@ -1,0 +1,65 @@
+'use client'
+
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { UserInfo } from '@/data/UserInfo'
+
+const AuthContext = createContext({
+  accessToken: '',
+  userInfo: null as UserInfo | null,
+  getUserInfo: async () => {},
+  logout: () => {},
+})
+
+interface Props {
+  children: ReactNode | ReactNode[]
+}
+export async function fetchUserInfo(accessToken: string): Promise<{ data: UserInfo }> {
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + accessToken,
+    },
+  }
+
+  const response = await fetch('http://localhost:8080/api/v1/users', requestOptions)
+  return response.json()
+}
+const AuthProvider = ({ children }: Props) => {
+  const [accessToken, setAccessToken] = useState<string>('')
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
+
+  useEffect(() => {
+    getUserInfo()
+  }, [])
+
+  const getUserInfo = async () => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access-token')
+      if (token) {
+        const response = await fetchUserInfo(token)
+        setAccessToken(token)
+        setUserInfo(response.data)
+      } else {
+        setAccessToken('')
+        setUserInfo(null)
+      }
+    }
+  }
+
+  const logout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access-token')
+    }
+    setAccessToken('')
+    setUserInfo(null)
+  }
+
+  return (
+    <AuthContext.Provider value={{ accessToken, userInfo, getUserInfo, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export { AuthProvider, AuthContext }

@@ -29,14 +29,12 @@ async function fetchData(id: number): Promise<{ data: ContentDetail }> {
 export default function Content(props) {
   const id = props.params.id
   const [detail, setDetail] = useState<ContentDetail | undefined>(undefined)
-  // const [loading, setLoading] = useState(true)
   // const [refreshComments, setRefreshComments] = useState(false) // 댓글 목록을 새로고침하기 위한 상태 추가
 
   useEffect(() => {
     const contentData = async (id: number) => {
       const response = await fetchData(id)
       setDetail(response.data)
-      // setLoading(false);
     }
 
     contentData(id)

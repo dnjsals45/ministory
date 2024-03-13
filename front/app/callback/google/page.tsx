@@ -1,10 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
+import { AuthContext } from '@/components/hooks/useAuth'
 
 const GoogleCallback = () => {
   const router = useRouter()
+  const { getUserInfo } = useContext(AuthContext)
 
   useEffect(() => {
     const url = new URL(window.location.href)
@@ -16,6 +18,7 @@ const GoogleCallback = () => {
       }).then((response) => {
         const accessToken = response.headers.get('Access-Token')
         if (accessToken) localStorage.setItem('access-token', accessToken)
+        getUserInfo()
         router.push('/')
       })
     }

@@ -1,3 +1,5 @@
+'use client'
+
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Logo from '@/data/logo.svg'
@@ -5,8 +7,15 @@ import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
+import WriteButton from '@/components/WriteButton'
+import { useContext } from 'react'
+import { AuthContext } from '@/components/hooks/useAuth'
+import LogoutButton from '@/components/LogoutButton'
+import LoginButton from '@/components/LoginButton'
 
 const Header = () => {
+  const { userInfo } = useContext(AuthContext)
+
   return (
     <header className="flex items-center justify-between py-10">
       <div>
@@ -37,6 +46,8 @@ const Header = () => {
               {link.title}
             </Link>
           ))}
+        {userInfo !== null && <WriteButton />}
+        {userInfo === null ? <LoginButton /> : <LogoutButton />}
         <SearchButton />
         <ThemeSwitch />
         <MobileNav />
