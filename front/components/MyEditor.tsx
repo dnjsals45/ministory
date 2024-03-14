@@ -1,15 +1,12 @@
 import React, { useRef } from 'react'
-import { Editor } from '@toast-ui/react-editor'
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import 'tui-color-picker/dist/tui-color-picker.css'
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css'
+import '@toast-ui/editor/dist/theme/toastui-editor-dark.css'
+import { Editor } from '@toast-ui/react-editor'
 
-interface MyEditorProps {
-  onChangeContent: (newContent: string) => void
-}
-
-const MyEditor: React.FC<MyEditorProps> = ({ onChangeContent }) => {
+export default function MyEditor({ onChangeContent }) {
   const editorRef = useRef<Editor | null>(null)
   const toolbarItems = [
     ['heading', 'bold', 'italic', 'strike'],
@@ -38,7 +35,6 @@ const MyEditor: React.FC<MyEditorProps> = ({ onChangeContent }) => {
         hideModeSwitch={true}
         // previewStyle="vertical" // markdown 타입에서만 유효
         height="500px"
-        theme={''}
         usageStatistics={false}
         toolbarItems={toolbarItems}
         plugins={[colorSyntax]}
@@ -47,5 +43,3 @@ const MyEditor: React.FC<MyEditorProps> = ({ onChangeContent }) => {
     </>
   )
 }
-
-export default MyEditor

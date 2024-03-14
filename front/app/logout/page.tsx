@@ -12,4 +12,6 @@ export default function LogOut() {
     logout()
     router.push('/')
   }
+
+  return null
 }

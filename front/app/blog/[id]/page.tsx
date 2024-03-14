@@ -4,7 +4,7 @@ import PostSimple from '@/layouts/PostSimple'
 import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
 import MyPost from '@/layouts/MyPost'
-import '@toast-ui/editor/dist/toastui-editor-viewer.css'
+// import '@toast-ui/editor/dist/toastui-editor-viewer.css'
 import { ContentDetail } from '@/data/ContentDetail'
 import { useEffect, useState } from 'react'
 

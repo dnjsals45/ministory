@@ -22,14 +22,14 @@ export default function MyPost({ content }: LayoutProps) {
             <div className="space-y-1 border-b border-gray-200 pb-10 text-center dark:border-gray-700">
               <dl>
                 <div>
-                  <dt className="sr-only">Published on</dt>
+                  <dt className="sr-only">Published</dt>
                   <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
                     <time dateTime="2024-03-02">2024-03-02</time>
                   </dd>
                 </div>
               </dl>
               <div>
-                <PageTitle>페이지 타이틀</PageTitle>
+                <PageTitle>{content.content.title}</PageTitle>
               </div>
             </div>
           </header>

@@ -1,11 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import Link from './Link'
 import headerNavLinks from '@/data/headerNavLinks'
+import { AuthContext } from '@/components/hooks/useAuth'
+import WriteButton from '@/components/WriteButton'
+import LoginButton from '@/components/LoginButton'
+import LogoutButton from '@/components/LogoutButton'
+import SearchButton from '@/components/SearchButton'
+import ThemeSwitch from '@/components/ThemeSwitch'
+import MobileWriteButton from '@/components/MobileWriteButton'
+import MobileLoginButton from '@/components/MobileLoginButton'
+import MobileLogoutButton from '@/components/MobileLogoutButton'
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)
+  const { userInfo } = useContext(AuthContext)
 
   const onToggleNav = () => {
     setNavShow((status) => {
@@ -68,6 +78,10 @@ const MobileNav = () => {
               </Link>
             </div>
           ))}
+          <div className="px-12 py-4">{userInfo !== null && <MobileWriteButton />}</div>
+          <div className="px-12 py-4">
+            {userInfo === null ? <MobileLoginButton /> : <MobileLogoutButton />}
+          </div>
         </nav>
       </div>
     </>
