@@ -34,7 +34,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     private final List<String> jwtIgnoreUrl = List.of(
             "/", "/favicon.ico",
             "/swagger", "/swagger-ui/**", "/v3/api-docs/**",
-            "/oauth2/**", "/api/v1/users/**"
+            "/oauth2/**"
     );
 
     @Override

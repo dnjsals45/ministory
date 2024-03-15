@@ -3,17 +3,14 @@ package seongmin.minilife.api.content.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import seongmin.minilife.api.user.service.UserUtilService;
 import seongmin.minilife.common.auth.dto.CustomUserDetails;
-import seongmin.minilife.domain.content.dto.AllContentsRes;
-import seongmin.minilife.domain.content.dto.GetContentRes;
-import seongmin.minilife.domain.content.dto.ModifyContentReq;
-import seongmin.minilife.domain.content.dto.ModifyContentRes;
+import seongmin.minilife.domain.content.dto.*;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.user.entity.User;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +25,12 @@ public class ContentService {
     public GetContentRes getContent(Long contentId) {
         Content content = contentUtilService.findById(contentId);
 
+        content.plusViewCount();
+
         return GetContentRes.from(content);
     }
 
-    public Long createContent(CustomUserDetails userDetails) {
+    public CreateContentRes createContent(CustomUserDetails userDetails) {
         User user = userUtilService.findById(userDetails.getUserId());
 
         Content newContent = Content.builder()
@@ -44,7 +43,9 @@ public class ContentService {
 
         contentUtilService.save(newContent);
 
-        return newContent.getId();
+        return CreateContentRes.builder()
+                .contentId(newContent.getId())
+                .build();
     }
 
     public ModifyContentRes modifyContent(Long contentId, ModifyContentReq req) {
@@ -62,9 +63,16 @@ public class ContentService {
     }
 
     public AllContentsRes getContentsPage(Long pageNum) {
-        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5));
+        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5, Sort.by(Sort.Direction.DESC, "createdAt")));
         List<Content> contents = contentsPage.getContent();
 
-        return AllContentsRes.from(contents, contentsPage.getTotalPages() - 1);
+        return AllContentsRes.from(contents, contentsPage.getTotalPages());
+    }
+
+    public AllContentsRes getRecentContents() {
+        Page<Content> recent = contentUtilService.findRecentContents(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdAt")));
+        List<Content> contents = recent.getContent();
+
+        return AllContentsRes.from(contents, recent.getTotalPages());
     }
 }

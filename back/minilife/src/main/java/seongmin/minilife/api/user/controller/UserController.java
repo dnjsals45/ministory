@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import seongmin.minilife.api.user.service.UserService;
 import seongmin.minilife.api.user.service.UserUtilService;
+import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.common.jwt.dto.JwtTokenInfo;
 import seongmin.minilife.common.jwt.provider.TokenProvider;
 import seongmin.minilife.common.response.SuccessResponse;
@@ -30,6 +32,7 @@ public class UserController {
 
     @Operation(summary = "테스트용 로그인", description = "DB에 있는 유저의 id만을 이용해서 로그인해야 가능한 기능 테스트")
     @GetMapping("/{user_id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> login(@Parameter(name = "user_id", description = "유저 회원번호")
                                    @PathVariable(name = "user_id") Long userId) {
         User user = userUtilService.findById(userId);
@@ -43,6 +46,7 @@ public class UserController {
 
     @Operation(summary = "Oauth 로그인/회원가입", description = "각 Provider 의 인증 코드를 가져옴")
     @GetMapping("/login/{provider}")
+    @PreAuthorize("permitAll()")
     public void getCode(@Parameter(name = "provider", description = "google, github")
                         @PathVariable(name = "provider") String provider,
                         HttpServletResponse response) throws IOException {
@@ -52,7 +56,7 @@ public class UserController {
     }
 
     @GetMapping("/auth/{provider}")
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> login(@Parameter(name = "provider", description = "google, github")
                                    @PathVariable(name = "provider") String provider,
                                    @RequestParam("code") String authorizationCode) {
@@ -72,5 +76,12 @@ public class UserController {
 
 
         return ResponseEntity.ok().header("Access-Token", accessToken).body(SuccessResponse.noContent());
+    }
+
+    @Operation(summary = "유저 정보 확인", description = "AT를 통해 유저 정보를 확인하여 반환한다")
+    @GetMapping("")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok().body(SuccessResponse.from(userService.getUserInfo(userDetails)));
     }
 }

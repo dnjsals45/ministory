@@ -49,4 +49,8 @@ public class Content extends Auditing {
     public void softDelete() {
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void plusViewCount() {
+        this.views += 1;
+    }
 }

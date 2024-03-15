@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.common.jwt.dto.JwtTokenInfo;
+import seongmin.minilife.domain.user.dto.UserInfoRes;
 import seongmin.minilife.domain.user.entity.User;
 import seongmin.minilife.domain.user.repository.UserRepository;
 
@@ -19,6 +21,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class UserService {
+    private final UserUtilService userUtilService;
     private final UserRepository userRepository;
     private final String githubClientId;
     private final String githubClientSecret;
@@ -33,7 +36,9 @@ public class UserService {
                        @Value("${spring.security.oauth2.client.registration.google.client-id}") String googleClientId,
                        @Value("${spring.security.oauth2.client.registration.google.client-secret}") String googleClientSecret,
                        @Value("${spring.security.oauth2.client.registration.google.redirect-uri}") String googleRedirectUri,
-                       UserRepository userRepository) {
+                       UserRepository userRepository,
+                       UserUtilService userUtilService) {
+        this.userUtilService = userUtilService;
         this.githubClientId = githubClientId;
         this.githubClientSecret = githubClientSecret;
         this.githubRedirectUri = githubRedirectUri;
@@ -202,5 +207,11 @@ public class UserService {
 
         userRepository.save(newUser);
         return newUser;
+    }
+
+    public UserInfoRes getUserInfo(CustomUserDetails userDetails) {
+        User user = userUtilService.findById(userDetails.getUserId());
+
+        return UserInfoRes.from(user);
     }
 }

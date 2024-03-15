@@ -36,4 +36,8 @@ public class ContentUtilService {
     public Page<Content> findContentPages(Pageable pageable) {
         return contentRepository.findByCompleteTrue(pageable);
     }
+
+    public Page<Content> findRecentContents(Pageable pageable) {
+        return contentRepository.findByCompleteTrue(pageable);
+    }
 }
