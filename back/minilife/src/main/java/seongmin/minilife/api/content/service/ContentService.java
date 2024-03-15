@@ -12,7 +12,6 @@ import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.user.entity.User;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
