@@ -13,6 +13,7 @@ import seongmin.minilife.common.Auditing;
 public class Tag extends Auditing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tag_id")
     private Long id;
 
     @Column(name = "tag_name", nullable = false)

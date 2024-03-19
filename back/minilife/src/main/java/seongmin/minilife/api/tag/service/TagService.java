@@ -3,6 +3,7 @@ package seongmin.minilife.api.tag.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import seongmin.minilife.domain.tag.dto.AllTagsRes;
+import seongmin.minilife.domain.tag.dto.RegisterTagReq;
 import seongmin.minilife.domain.tag.entity.Tag;
 
 import java.util.List;
@@ -16,5 +17,9 @@ public class TagService {
         List<Tag> tags = tagUtilService.findAllTags();
 
         return AllTagsRes.from(tags);
+    }
+
+    public void registerTag(RegisterTagReq req) {
+        tagUtilService.saveTag(req.getTagName());
     }
 }

@@ -12,12 +12,18 @@ import java.util.List;
 public class TagUtilService {
     private final TagRepository tagRepository;
 
+    public Tag findByTagName(String tagName) {
+        return tagRepository.findByTagName(tagName).orElseThrow(() -> new RuntimeException("일치하는 태그가 없습니다."));
+    }
+
     public List<Tag> findAllTags() {
         return tagRepository.findAll();
     }
 
-    public void saveContentTag(String tagName) {
-        Tag tag = tagRepository.findByTagName(tagName);
+
+
+    public void saveTag(String tagName) {
+        Tag tag = this.findByTagName(tagName);
         if (tag == null) {
             Tag newTag = Tag.builder()
                     .tagName(tagName)

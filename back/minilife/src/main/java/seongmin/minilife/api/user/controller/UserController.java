@@ -51,7 +51,6 @@ public class UserController {
                         @PathVariable(name = "provider") String provider,
                         HttpServletResponse response) throws IOException {
         String url = userService.getCode(provider);
-        System.out.println("url = " + url);
         response.sendRedirect(url);
     }
 

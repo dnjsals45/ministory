@@ -21,6 +21,7 @@ public class ContentTag extends Auditing {
     @JoinColumn(name = "content_id")
     private Content content;
 
-    @Column(name = "content_tag")
-    private String tag;
+    @ManyToOne
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
 }
