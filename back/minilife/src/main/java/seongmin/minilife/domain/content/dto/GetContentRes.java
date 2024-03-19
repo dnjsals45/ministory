@@ -1,20 +1,26 @@
 package seongmin.minilife.domain.content.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import seongmin.minilife.domain.content.entity.Content;
+import seongmin.minilife.domain.tag.dto.ContentTagDto;
+import seongmin.minilife.domain.tag.entity.ContentTag;
 import seongmin.minilife.domain.user.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class GetContentRes {
     private ResContent content;
     private ResUser user;
-
     @Getter
     @AllArgsConstructor
+    @Builder
     public static class ResContent {
         private Long contentId;
         private String title;
@@ -22,9 +28,25 @@ public class GetContentRes {
         private Boolean complete;
         private Long views;
         private LocalDateTime createdAt;
+        private List<ContentTagDto> tags;
+
 
         public static ResContent from(Content content) {
-            return new ResContent(content.getId(), content.getTitle(), content.getBody(), content.getComplete(), content.getViews(), content.getCreatedAt());
+            List<ContentTagDto> response = new ArrayList<>();
+            List<ContentTag> tags = content.getContentTags();
+            for (ContentTag tag : tags) {
+                response.add(ContentTagDto.from(tag));
+            }
+
+            return ResContent.builder()
+                    .contentId(content.getId())
+                    .title(content.getTitle())
+                    .body(content.getBody())
+                    .complete(content.getComplete())
+                    .views(content.getViews())
+                    .createdAt(content.getCreatedAt())
+                    .tags(response)
+                    .build();
         }
 
         public static ResContent from(Content content, String body) {
@@ -34,25 +56,60 @@ public class GetContentRes {
             } else {
                 limited = body;
             }
-            return new ResContent(content.getId(), content.getTitle(), limited, content.getComplete(), content.getViews(), content.getCreatedAt());
+            List<ContentTagDto> response = new ArrayList<>();
+            List<ContentTag> tags = content.getContentTags();
+            for (ContentTag tag : tags) {
+                response.add(ContentTagDto.from(tag));
+            }
+
+            return ResContent.builder()
+                    .contentId(content.getId())
+                    .title(content.getTitle())
+                    .body(limited)
+                    .complete(content.getComplete())
+                    .views(content.getViews())
+                    .createdAt(content.getCreatedAt())
+                    .tags(response)
+                    .build();
         }
     }
 
     @Getter
     @AllArgsConstructor
+    @Builder
     public static class ResUser {
         private String nickname;
 
         public static ResUser from(User user) {
-            return new ResUser(user.getNickname());
+            return ResUser.builder()
+                    .nickname(user.getNickname())
+                    .build();
         }
     }
 
     public static GetContentRes from(Content content) {
-        return new GetContentRes(ResContent.from(content), ResUser.from(content.getUser()));
+        List<ContentTagDto> response = new ArrayList<>();
+        List<ContentTag> tags = content.getContentTags();
+        for (ContentTag tag : tags) {
+            response.add(ContentTagDto.from(tag));
+        }
+
+        return GetContentRes.builder()
+                .content(ResContent.from(content))
+                .user(ResUser.from(content.getUser()))
+                .build();
     }
 
     public static GetContentRes from(Content content, String body) {
-        return new GetContentRes(ResContent.from(content, body), ResUser.from(content.getUser()));
+        List<ContentTagDto> response = new ArrayList<>();
+        List<ContentTag> tags = content.getContentTags();
+        for (ContentTag tag : tags) {
+            response.add(ContentTagDto.from(tag));
+        }
+
+        return GetContentRes.builder()
+                .content(ResContent.from(content, body))
+                .user(ResUser.from(content.getUser()))
+                .build();
     }
 }

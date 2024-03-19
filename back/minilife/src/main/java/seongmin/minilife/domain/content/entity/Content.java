@@ -3,9 +3,12 @@ package seongmin.minilife.domain.content.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import seongmin.minilife.common.Auditing;
+import seongmin.minilife.domain.tag.entity.ContentTag;
 import seongmin.minilife.domain.user.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "CONTENT")
@@ -22,6 +25,10 @@ public class Content extends Auditing {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "content")
+    private List<ContentTag> contentTags = new ArrayList<>();
 
     @Column(name = "title", nullable = false)
     private String title;

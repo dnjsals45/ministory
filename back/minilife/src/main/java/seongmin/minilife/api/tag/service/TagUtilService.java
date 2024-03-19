@@ -13,7 +13,7 @@ public class TagUtilService {
     private final TagRepository tagRepository;
 
     public Tag findByTagName(String tagName) {
-        return tagRepository.findByTagName(tagName).orElseThrow(() -> new RuntimeException("일치하는 태그가 없습니다."));
+        return tagRepository.findByTagName(tagName);
     }
 
     public List<Tag> findAllTags() {

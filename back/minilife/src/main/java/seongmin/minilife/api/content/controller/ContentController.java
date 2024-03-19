@@ -53,7 +53,6 @@ public class ContentController {
 
     @Operation(summary = "게시글 1개 수정", description = "complete가 true면 완성, 아니면 임시저장")
     @PatchMapping("/{content_id}")
-//    @PreAuthorize("isAuthenticated() && @authManager.isContentAuthor(#contentId, authentication.getPrincipal())")
     @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
     public ResponseEntity<?> modifyContent(@Parameter(name = "content_id", description = "게시글 번호")
                                            @PathVariable(name = "content_id") Long contentId,
