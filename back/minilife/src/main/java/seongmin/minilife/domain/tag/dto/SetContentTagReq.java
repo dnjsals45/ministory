@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SetContentTagReq {
-    private String tagName;
+    private List<String> tags;
 }

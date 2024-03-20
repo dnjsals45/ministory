@@ -29,16 +29,20 @@ public class ContentTagService {
 
     public void addContentTag(Long contentId, SetContentTagReq req) {
         Content content = contentUtilService.findById(contentId);
-        Tag tag = tagUtilService.findByTagName(req.getTagName());
-        if (tag == null) {
-            throw new IllegalArgumentException("일치하는 태그가 없습니다");
-        }
-        ContentTag newContentTag = ContentTag.builder()
-                .content(content)
-                .tag(tag)
-                .build();
 
-        contentTagUtilService.save(newContentTag);
+        List<String> tags = req.getTags();
+        for (String tagName : tags) {
+            Tag tag = tagUtilService.findByTagName(tagName);
+            if (tag == null) {
+                throw new IllegalArgumentException("일치하는 태그가 없습니다");
+            }
+            ContentTag newContentTag = ContentTag.builder()
+                    .content(content)
+                    .tag(tag)
+                    .build();
+
+            contentTagUtilService.save(newContentTag);
+        }
     }
 
     @Transactional
