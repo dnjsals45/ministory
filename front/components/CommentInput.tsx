@@ -43,7 +43,7 @@ export default function CommentInput({ contentId, onCommentAdded }) {
         onCommentAdded()
         setComment('')
       } else {
-        alert('댓글 등록 실패')
+        alert('로그인을 해야 합니다')
       }
     } catch (error) {
       console.error('댓글 등록 중 오류가 발생했습니다.', error)

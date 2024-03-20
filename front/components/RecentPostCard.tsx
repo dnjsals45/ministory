@@ -32,7 +32,7 @@ const RecentPostCard = ({ data }) => {
           <p className="prose mb-3 line-clamp-4 min-h-[112px] max-w-none overflow-ellipsis whitespace-normal break-words text-gray-500 dark:text-gray-400">
             {data.content.body}
           </p>
-          <p className="text-right text-xs leading-6 text-slate-400 dark:hover:text-primary-400">
+          <p className="-mb-4 text-right text-xs leading-6 text-slate-400 dark:hover:text-primary-400">
             {data.content.createdAt.toString().split('T')[0]} | 조회수: {data.content.views}
           </p>
         </div>

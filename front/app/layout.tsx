@@ -11,6 +11,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
 import { AuthProvider } from '@/components/hooks/useAuth'
+import { TagProvider } from '@/components/hooks/useTag'
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -81,8 +82,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex h-screen flex-col justify-between font-sans">
               <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
                 <AuthProvider>
-                  <Header />
-                  <main className="mb-auto">{children}</main>
+                  <TagProvider>
+                    <Header />
+                    <main className="mb-auto">{children}</main>
+                  </TagProvider>
                 </AuthProvider>
               </SearchProvider>
               <Footer />

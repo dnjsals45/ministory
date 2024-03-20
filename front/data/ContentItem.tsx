@@ -1,3 +1,7 @@
+interface Tag {
+  tagName: string
+}
+
 interface Content {
   contentId: number
   title: string
@@ -5,6 +9,7 @@ interface Content {
   complete: boolean
   views: number
   createdAt: Date
+  tags: Tag[]
 }
 
 interface User {

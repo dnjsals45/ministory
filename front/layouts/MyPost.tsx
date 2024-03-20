@@ -13,6 +13,7 @@ interface LayoutProps {
 }
 
 export default function MyPost({ content }: LayoutProps) {
+  const dateTime = content.content.createdAt.toString().split('T')[0]
   return (
     <SectionContainer>
       <ScrollTopAndComment />
@@ -24,7 +25,7 @@ export default function MyPost({ content }: LayoutProps) {
                 <div>
                   <dt className="sr-only">Published</dt>
                   <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                    <time dateTime="2024-03-02">2024-03-02</time>
+                    <time dateTime={dateTime}>{dateTime}</time>
                   </dd>
                 </div>
               </dl>
