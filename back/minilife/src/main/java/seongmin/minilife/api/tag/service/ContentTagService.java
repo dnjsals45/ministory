@@ -31,6 +31,9 @@ public class ContentTagService {
         Content content = contentUtilService.findById(contentId);
 
         List<String> tags = req.getTags();
+        if (tags.isEmpty()) {
+            return;
+        }
         for (String tagName : tags) {
             Tag tag = tagUtilService.findByTagName(tagName);
             if (tag == null) {

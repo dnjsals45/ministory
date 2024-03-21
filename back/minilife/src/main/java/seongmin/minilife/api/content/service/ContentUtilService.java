@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import seongmin.minilife.common.response.code.ContentErrorCode;
+import seongmin.minilife.common.response.exception.ContentErrorException;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.repository.ContentRepository;
 
@@ -16,7 +18,7 @@ public class ContentUtilService {
 
     public Content findById(Long contentId) {
         return contentRepository.findById(contentId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글입니다."));
+                .orElseThrow(() -> new ContentErrorException(ContentErrorCode.INVALID_CONTENT_ID));
     }
 
     public Content save(Content content) {
@@ -27,10 +29,6 @@ public class ContentUtilService {
 
     public boolean existsByIdAndUserId(Long contentId, Long userId) {
         return contentRepository.existsByIdAndUserId(contentId, userId);
-    }
-
-    public List<Content> findAllContents() {
-        return contentRepository.findByCompleteTrue();
     }
 
     public Page<Content> findContentPages(Pageable pageable) {

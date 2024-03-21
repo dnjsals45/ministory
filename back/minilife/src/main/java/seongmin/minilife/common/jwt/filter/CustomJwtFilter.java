@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import seongmin.minilife.common.auth.dto.CustomUserDetails;
-import seongmin.minilife.common.exception.AuthErrorException;
+import seongmin.minilife.common.response.exception.AuthErrorException;
 import seongmin.minilife.common.auth.service.CustomUserDetailsService;
 import seongmin.minilife.common.code.AuthErrorCode;
 import seongmin.minilife.common.jwt.provider.TokenProvider;
@@ -40,7 +40,6 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.warn("request: {}@{}", request.getMethod(), request.getRequestURI());
-//        log.warn("body: {}", request.);
         if (ignoreTokenRequest(request)) {
             log.info("JWT Filter: Ignoring request: {}", request.getRequestURI());
             filterChain.doFilter(request, response);

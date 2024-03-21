@@ -1,4 +1,4 @@
-package seongmin.minilife.common.exception;
+package seongmin.minilife.common.response.exception;
 
 import io.jsonwebtoken.JwtException;
 import lombok.Getter;

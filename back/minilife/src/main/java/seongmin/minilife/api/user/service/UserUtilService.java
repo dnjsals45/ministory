@@ -3,8 +3,12 @@ package seongmin.minilife.api.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import seongmin.minilife.common.code.AuthErrorCode;
 import seongmin.minilife.common.jwt.dto.JwtTokenInfo;
 import seongmin.minilife.common.jwt.provider.TokenProvider;
+import seongmin.minilife.common.response.code.UserErrorCode;
+import seongmin.minilife.common.response.exception.AuthErrorException;
+import seongmin.minilife.common.response.exception.UserErrorException;
 import seongmin.minilife.domain.user.entity.User;
 import seongmin.minilife.domain.user.repository.UserRepository;
 
@@ -17,7 +21,7 @@ public class UserUtilService {
 
     public User findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new UserErrorException(UserErrorCode.USER_NOT_FOUND));
     }
 
     public String login(User user) {
