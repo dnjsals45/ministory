@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import seongmin.minilife.common.auth.dto.CustomUserDetails;
+import seongmin.minilife.common.response.code.AuthErrorCode;
 import seongmin.minilife.common.response.exception.AuthErrorException;
 import seongmin.minilife.common.auth.service.CustomUserDetailsService;
-import seongmin.minilife.common.code.AuthErrorCode;
 import seongmin.minilife.common.jwt.provider.TokenProvider;
 
 import java.io.IOException;

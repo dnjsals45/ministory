@@ -2,7 +2,7 @@ package seongmin.minilife.common.response.exception;
 
 import io.jsonwebtoken.JwtException;
 import lombok.Getter;
-import seongmin.minilife.common.code.AuthErrorCode;
+import seongmin.minilife.common.response.code.AuthErrorCode;
 
 @Getter
 public class AuthErrorException extends JwtException {
