@@ -62,6 +62,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     private boolean isAnonymousRequest(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");
+        log.warn("accessToken : {}", accessToken);
 
         return !StringUtils.hasText(accessToken);
     }
@@ -84,10 +85,6 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
         if (!StringUtils.hasText(accessToken)) {
             handleAuthErrorException(AuthErrorCode.EMPTY_ACCESS_TOKEN, "엑세스 토큰이 비어있습니다.");
-        }
-
-        if (Boolean.TRUE.equals(accessTokenProvider.isTokenExpire(accessToken))) {
-            handleAuthErrorException(AuthErrorCode.EXPIRED_ACCESS_TOKEN, "만료된 엑세스 토큰입니다.");
         }
 
         return accessToken;

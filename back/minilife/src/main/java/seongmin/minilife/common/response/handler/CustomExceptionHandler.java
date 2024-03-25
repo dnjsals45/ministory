@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import seongmin.minilife.common.response.ErrorResponse;
 import seongmin.minilife.common.response.exception.*;
 
+import java.nio.file.AccessDeniedException;
+
 @Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler {
@@ -48,9 +50,9 @@ public class CustomExceptionHandler {
         return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(response);
     }
 
-    @ExceptionHandler(JwtException.class)
-    protected ResponseEntity<ErrorResponse> handleJwtErrorException(JwtException e) {
-        log.warn("handleJwtErrorException : {}", e.getMessage());
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<ErrorResponse> handlerAccessDeniedException(AccessDeniedException e) {
+        log.warn("handlerAccessDeniedException : {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.of(e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
