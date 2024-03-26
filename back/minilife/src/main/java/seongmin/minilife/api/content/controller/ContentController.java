@@ -21,7 +21,7 @@ import seongmin.minilife.domain.content.dto.ModifyContentReq;
 public class ContentController {
     private final ContentService contentService;
 
-    @Operation(summary = "최근 게시물 8개 조회", description = "9개까지만 보여주기")
+    @Operation(summary = "최근 게시물 9개 조회", description = "9개까지만 보여주기")
     @GetMapping("/recent")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getRecentContent() {
