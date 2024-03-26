@@ -14,6 +14,7 @@ public enum AuthErrorCode implements StatusCode {
      * 400 BAD_REQUEST
      */
     EMPTY_ACCESS_TOKEN(BAD_REQUEST, "액세스 토큰이 비어있습니다."),
+    UNKNOWN_PROVIDER(BAD_REQUEST, "알 수 없는 프로바이더입니다."),
 
     /**
      * 401 UNAUTHORIZED
