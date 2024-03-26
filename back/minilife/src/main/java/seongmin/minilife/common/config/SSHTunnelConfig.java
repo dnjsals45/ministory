@@ -3,6 +3,7 @@ package seongmin.minilife.common.config;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import jakarta.annotation.PreDestroy;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class SSHTunnelConfig {
 
     private Session session;
 
+    @PreDestroy
     public void closeSSH() {
         if (session != null && session.isConnected())
             session.disconnect();
