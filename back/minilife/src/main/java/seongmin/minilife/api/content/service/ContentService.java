@@ -21,7 +21,6 @@ import java.util.List;
 public class ContentService {
     private final ContentUtilService contentUtilService;
     private final UserUtilService userUtilService;
-    private final ContentTagUtilService contentTagUtilService;
 
     @Transactional
     public GetContentRes getContent(Long contentId) {
@@ -66,17 +65,16 @@ public class ContentService {
 
     @Transactional(readOnly = true)
     public AllContentsRes getContentsPage(Long pageNum) {
-        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5, Sort.by(Sort.Direction.DESC, "createdAt")));
+        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5));
         List<Content> contents = contentsPage.getContent();
 
         return AllContentsRes.from(contents, contentsPage.getTotalPages());
     }
 
     @Transactional(readOnly = true)
-    public AllContentsRes getRecentContents() {
-        Page<Content> recent = contentUtilService.findRecentContents(PageRequest.of(0, 9, Sort.by(Sort.Direction.DESC, "createdAt")));
-        List<Content> contents = recent.getContent();
+    public RecentContentsRes getRecentContents() {
+        List<Content> contents = contentUtilService.findRecentContentsWithTags();
 
-        return AllContentsRes.from(contents, recent.getTotalPages());
+        return RecentContentsRes.from(contents);
     }
 }

@@ -16,6 +16,8 @@ import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.common.jwt.dto.JwtTokenInfo;
 import seongmin.minilife.common.jwt.provider.TokenProvider;
 import seongmin.minilife.common.response.SuccessResponse;
+import seongmin.minilife.common.response.code.AuthErrorCode;
+import seongmin.minilife.common.response.exception.AuthErrorException;
 import seongmin.minilife.domain.user.entity.User;
 
 import java.io.IOException;
@@ -63,13 +65,13 @@ public class UserController {
         switch (provider) {
             case "github" -> authorizationToken = userService.getAccessTokenFromGithub(authorizationCode);
             case "google" -> authorizationToken = userService.getAccessTokenFromGoogle(authorizationCode);
-            default -> throw new IllegalArgumentException("존재하지 않는 provider");
+            default -> throw new AuthErrorException(AuthErrorCode.UNKNOWN_PROVIDER, "존재하지 않는 프로바이더 입니다.");
         }
         JwtTokenInfo tokenInfo;
         switch (provider) {
             case "github" -> tokenInfo = userService.loginWithGithub(authorizationToken);
             case "google" -> tokenInfo = userService.loginWithGoogle(authorizationToken);
-            default -> throw new IllegalArgumentException("존재하지 않는 provider");
+            default -> throw new AuthErrorException(AuthErrorCode.UNKNOWN_PROVIDER, "존재하지 않는 프로바이더 입니다.");
         }
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
 

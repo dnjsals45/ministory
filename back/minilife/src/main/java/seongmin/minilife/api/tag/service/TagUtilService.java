@@ -2,6 +2,8 @@ package seongmin.minilife.api.tag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import seongmin.minilife.common.response.code.TagErrorCode;
+import seongmin.minilife.common.response.exception.TagErrorException;
 import seongmin.minilife.domain.tag.entity.Tag;
 import seongmin.minilife.domain.tag.repository.TagRepository;
 
@@ -13,7 +15,8 @@ public class TagUtilService {
     private final TagRepository tagRepository;
 
     public Tag findByTagName(String tagName) {
-        return tagRepository.findByTagName(tagName);
+        return tagRepository.findByTagName(tagName)
+                .orElseThrow(() -> new TagErrorException(TagErrorCode.INVALID_TAG));
     }
 
     public List<Tag> findAllTags() {

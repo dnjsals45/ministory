@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import seongmin.minilife.common.response.code.ContentErrorCode;
 import seongmin.minilife.common.response.exception.ContentErrorException;
+import seongmin.minilife.domain.content.dto.RecentContentsRes;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.repository.ContentRepository;
 
@@ -32,10 +33,10 @@ public class ContentUtilService {
     }
 
     public Page<Content> findContentPages(Pageable pageable) {
-        return contentRepository.findByCompleteTrue(pageable);
+        return contentRepository.findContentsPage(pageable);
     }
 
-    public Page<Content> findRecentContents(Pageable pageable) {
-        return contentRepository.findByCompleteTrue(pageable);
+    public List<Content> findRecentContentsWithTags() {
+        return contentRepository.findRecentContentsWithTags();
     }
 }

@@ -8,7 +8,7 @@ import seongmin.minilife.domain.content.entity.Content;
 
 import java.util.List;
 
-public interface ContentRepository extends JpaRepository<Content, Long> {
+public interface ContentRepository extends JpaRepository<Content, Long>, QContentRepository {
     boolean existsByIdAndUserId(Long contentId, Long userId);
 
     @EntityGraph(attributePaths = {"contentTags"})
