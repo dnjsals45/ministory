@@ -39,7 +39,7 @@ jwt:
   secret:
     access-secret-key: ${JWT_ACCESS_SECRET}
   token:
-    access-expiration: 6000 # 1시간(1000(ms) * 60(m) * 60(h))
+    access-expiration: 360000 # 1시간(1000(ms) * 60(m) * 60(h))
     access-header: Authorization
 
 springdoc:
