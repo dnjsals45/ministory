@@ -5,14 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import seongmin.minilife.api.tag.service.ContentTagUtilService;
 import seongmin.minilife.api.user.service.UserUtilService;
 import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.domain.content.dto.*;
 import seongmin.minilife.domain.content.entity.Content;
-import seongmin.minilife.domain.tag.entity.ContentTag;
 import seongmin.minilife.domain.user.entity.User;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 

@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import seongmin.minilife.common.response.code.ContentErrorCode;
 import seongmin.minilife.common.response.exception.ContentErrorException;
-import seongmin.minilife.domain.content.dto.RecentContentsRes;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.repository.ContentRepository;
 

@@ -6,8 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import seongmin.minilife.domain.content.dto.AllContentsRes;
-import seongmin.minilife.domain.content.dto.RecentContentsRes;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.entity.QContent;
 import seongmin.minilife.domain.tag.entity.QContentTag;
@@ -69,7 +67,7 @@ public class QContentRepositoryImpl implements QContentRepository {
                     .selectFrom(content)
                     .leftJoin(content.contentTags, contentTag).fetchJoin()
                     .where(content.id.in(contentIds))
-                    .orderBy(content.createdAt.desc()) // 필요한 정렬 조건을 다시 적용
+                    .orderBy(content.createdAt.desc())
                     .fetch();
 
         } else {
