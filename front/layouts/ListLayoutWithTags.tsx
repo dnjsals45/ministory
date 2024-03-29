@@ -110,7 +110,7 @@ export default function ListLayoutWithTags({ title, postPerPage }: ListLayoutPro
                         className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
                         aria-label={`View posts tagged ${t.tagName}`}
                       >
-                        {`${t.tagName}`}
+                        {`${t.tagName} (${t.count})`}
                         {/*{`${t} (${tagCounts[t]})`}*/}
                       </Link>
                     </li>

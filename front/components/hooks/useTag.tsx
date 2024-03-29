@@ -13,7 +13,7 @@ interface Props {
 }
 
 export async function fetchTagData(): Promise<{ data: { tags: ContentTag[] } }> {
-  const data = await fetch('http://localhost:8080/api/v1/tags', {
+  const data = await fetch('http://localhost:8080/api/v1/tags/counts', {
     method: 'GET',
   })
   return data.json()

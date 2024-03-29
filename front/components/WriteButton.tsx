@@ -1,24 +1,31 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface newPostData {
   contentId: string
 }
 
-export async function createPost(requestOptions: {
-  method: string
-  headers: { 'Content-Type': string }
-}): Promise<{ data: newPostData }> {
+export async function createPost(
+  requestOptions: {
+    method: string
+    headers: { 'Content-Type': string }
+  },
+  router
+): Promise<{ data: newPostData }> {
   const response = await fetch('http://localhost:8080/api/v1/contents', requestOptions)
+
+  if (response.status === 401) {
+    localStorage.removeItem('access-token')
+    router.push('/')
+    alert('로그아웃 처리')
+  }
 
   return response.json()
 }
 
 export default function WriteButton() {
   const router = useRouter()
-  const [contentId, setContentId] = useState<string>('')
   const newPost = async () => {
     const requestOptions = {
       method: 'POST',
@@ -34,9 +41,8 @@ export default function WriteButton() {
       }
     }
 
-    const response = await createPost(requestOptions)
-    setContentId(response.data.contentId)
-    router.push(`/blog/post/${contentId}`)
+    const response = await createPost(requestOptions, router)
+    router.push(`/blog/post/${response.data.contentId}`)
   }
 
   return (
