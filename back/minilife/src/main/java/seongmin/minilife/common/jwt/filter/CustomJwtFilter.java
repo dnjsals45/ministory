@@ -62,7 +62,6 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     private boolean isAnonymousRequest(HttpServletRequest request) {
         String accessToken = request.getHeader("Authorization");
-        log.warn("accessToken : {}", accessToken);
 
         return !StringUtils.hasText(accessToken);
     }

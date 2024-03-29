@@ -2,8 +2,7 @@ package seongmin.minilife.api.tag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import seongmin.minilife.domain.tag.dto.AllTagsRes;
-import seongmin.minilife.domain.tag.dto.RegisterTagReq;
+import seongmin.minilife.domain.tag.dto.*;
 import seongmin.minilife.domain.tag.entity.Tag;
 
 import java.util.List;
@@ -22,4 +21,9 @@ public class TagService {
     public void registerTag(RegisterTagReq req) {
         tagUtilService.saveTag(req.getTagName());
     }
+
+    public GetTagsCountRes countTags() {
+        return GetTagsCountRes.from(tagUtilService.countTags());
+    }
+
 }

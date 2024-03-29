@@ -5,9 +5,7 @@ import seongmin.minilife.domain.tag.entity.Tag;
 
 import java.util.Optional;
 
-public interface TagRepository extends JpaRepository<Tag, Long> {
+public interface TagRepository extends JpaRepository<Tag, Long>, QTagRepository {
     Optional<Tag> findByTagName(String tagName);
-
-
 
 }
