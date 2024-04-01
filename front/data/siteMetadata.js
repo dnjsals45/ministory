@@ -1,16 +1,16 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'SeongMin Blog',
+  title: 'MiniLife',
   author: 'Seongmin',
   headerTitle: 'MiniLife',
-  description: 'A blog created with Next.js and Tailwind.css',
+  description: '백엔드 개발자가 혼자 만들어가는 블로그',
   language: 'ko-KR',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
   siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
-  siteLogo: '/static/images/logo.png',
+  // 사이트 상단 로고 이미지 변경
+  siteLogo: '/static/images/dog.png',
   socialBanner: '/static/images/twitter-card.png',
-  mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'dnjsals45@gmail.com',
   github: 'https://github.com/dnjsals45',
   twitter: 'https://twitter.com/Twitter',
