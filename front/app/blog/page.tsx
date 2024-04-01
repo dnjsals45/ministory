@@ -1,10 +1,15 @@
 import ListLayout from '@/layouts/ListLayoutWithTags'
 import { genPageMetadata } from 'app/seo'
-
-const POSTS_PER_PAGE = 5
+import { Suspense } from 'react'
 
 export const metadata = genPageMetadata({ title: 'Blog' })
 
 export default function BlogPage() {
-  return <ListLayout title="All Posts" postPerPage={POSTS_PER_PAGE} />
+  return (
+    <div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ListLayout title="All Posts" />
+      </Suspense>
+    </div>
+  )
 }

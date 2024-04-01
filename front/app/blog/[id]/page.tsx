@@ -1,19 +1,10 @@
 'use client'
 
-import PostSimple from '@/layouts/PostSimple'
-import PostLayout from '@/layouts/PostLayout'
-import PostBanner from '@/layouts/PostBanner'
 import MyPost from '@/layouts/MyPost'
 import { ContentDetail } from '@/data/ContentDetail'
 import { useEffect, useState } from 'react'
 import Comments from '@/components/Comments'
 import CommentInput from '@/components/CommentInput'
-
-const layouts = {
-  PostSimple,
-  PostLayout,
-  PostBanner,
-}
 
 const Layout = MyPost
 

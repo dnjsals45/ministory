@@ -17,6 +17,7 @@ interface PaginationProps {
 }
 interface ListLayoutProps {
   title: string
+  tagName: string
 }
 
 function Pagination({ totalPages, currentPage }: PaginationProps) {
@@ -59,16 +60,20 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
   )
 }
 
-async function fetchContentsData(
-  pageNumber: number
+async function fetchTagContentsData(
+  pageNumber: number,
+  tagName: string
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
-  const data = await fetch(`http://localhost:8080/api/v1/contents?page=${pageNumber}`, {
-    method: 'GET',
-  })
+  const data = await fetch(
+    `http://localhost:8080/api/v1/contents/tags/${tagName}?page=${pageNumber}`,
+    {
+      method: 'GET',
+    }
+  )
   return data.json()
 }
 
-export default function ListLayoutWithTags({ title }: ListLayoutProps) {
+export default function ListLayoutWithTags({ title, tagName }: ListLayoutProps) {
   const params = useSearchParams().get('page')
   const pageNumber = params !== null ? parseInt(params) : 1
   const [contents, setContents] = useState<ContentItem[]>([])
@@ -77,7 +82,8 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
 
   useEffect(() => {
     const fetchContents = async () => {
-      const contentsData = await fetchContentsData(pageNumber)
+      const contentsData = await fetchTagContentsData(pageNumber, tagName)
+      console.log('data: ', contentsData)
       setContents(contentsData.data.contents)
       setPagination({
         currentPage: pageNumber,
