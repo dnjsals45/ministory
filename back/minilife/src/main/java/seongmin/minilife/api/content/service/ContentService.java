@@ -5,10 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import seongmin.minilife.api.tag.service.TagUtilService;
 import seongmin.minilife.api.user.service.UserUtilService;
 import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.domain.content.dto.*;
 import seongmin.minilife.domain.content.entity.Content;
+import seongmin.minilife.domain.tag.entity.Tag;
 import seongmin.minilife.domain.user.entity.User;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ContentService {
     private final ContentUtilService contentUtilService;
     private final UserUtilService userUtilService;
+    private final TagUtilService tagUtilService;
 
     @Transactional
     public GetContentRes getContent(Long contentId) {
@@ -73,5 +76,15 @@ public class ContentService {
         List<Content> contents = contentUtilService.findRecentContentsWithTags();
 
         return RecentContentsRes.from(contents);
+    }
+
+    @Transactional(readOnly = true)
+    public AllContentsRes getTagContents(String tagName, Long pageNum) {
+        tagUtilService.findByTagName(tagName);
+
+        Page<Content> contentsPage = contentUtilService.findTagContents(tagName, PageRequest.of(pageNum.intValue() - 1, 5));
+        List<Content> contents = contentsPage.getContent();
+
+        return AllContentsRes.from(contents, contentsPage.getTotalPages());
     }
 }

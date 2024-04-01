@@ -25,5 +25,4 @@ public class TagService {
     public GetTagsCountRes countTags() {
         return GetTagsCountRes.from(tagUtilService.countTags());
     }
-
 }

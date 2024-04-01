@@ -2,6 +2,7 @@ package seongmin.minilife.api.content.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import seongmin.minilife.common.response.code.ContentErrorCode;
@@ -37,5 +38,9 @@ public class ContentUtilService {
 
     public List<Content> findRecentContentsWithTags() {
         return contentRepository.findRecentContentsWithTags();
+    }
+
+    public Page<Content> findTagContents(String tagName, Pageable pageable) {
+        return contentRepository.findTagContents(tagName, pageable);
     }
 }

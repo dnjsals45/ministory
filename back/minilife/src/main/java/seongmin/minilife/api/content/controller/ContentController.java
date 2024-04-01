@@ -69,4 +69,13 @@ public class ContentController {
         contentService.deleteContent(contentId);
         return ResponseEntity.ok().body(SuccessResponse.noContent());
     }
+
+    @Operation(summary = "태그가 달려있는 게시물만 반환", description = "spring일 경우 spring태그가 있는 게시물만 반환")
+    @GetMapping("/tags/{tag_name}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getTagContents(@PathVariable(name = "tag_name") String tagName,
+                                             @RequestParam(name = "page") Long pageNum) {
+        pageNum = pageNum == null ? 1 : pageNum;
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getTagContents(tagName, pageNum)));
+    }
 }

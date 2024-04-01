@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import seongmin.minilife.domain.content.entity.Content;
 import seongmin.minilife.domain.content.entity.QContent;
 import seongmin.minilife.domain.tag.entity.QContentTag;
+import seongmin.minilife.domain.tag.entity.QTag;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class QContentRepositoryImpl implements QContentRepository {
 
     QContent content = QContent.content;
     QContentTag contentTag = QContentTag.contentTag;
+    QTag tag = QTag.tag;
 
     @Override
     public Page<Content> findContentsPage(Pageable pageable) {
@@ -74,7 +76,7 @@ public class QContentRepositoryImpl implements QContentRepository {
             return null;
         }
 
-//        메모리에서 처리하게 되는 코드(fetchJoin 과 limit 함께 사용) 나중에 많은 건을 조회했을 때 성능차이 비교해보자
+//        메모리에서 처리하게 되는 코드(fetchJoin 과 limit 함께 사용) 나중에 많은 건을 조회했을 때 성능차이 비교해보기
 //        return jpaQueryFactory
 //                .selectFrom(content)
 //                .leftJoin(content.contentTags, contentTag).fetchJoin()
@@ -82,5 +84,49 @@ public class QContentRepositoryImpl implements QContentRepository {
 //                .orderBy(content.createdAt.desc())
 //                .limit(5)
 //                .fetch();
+    }
+
+    @Override
+    public Page<Content> findTagContents(String tagName, Pageable pageable) {
+
+        List<Long> contentIds = jpaQueryFactory
+                .select(content.id)
+                .from(content)
+                .join(content.contentTags, contentTag)
+                .join(contentTag.tag, tag)
+                .where(tag.tagName.eq(tagName)
+                        .and(content.complete.isTrue())
+                        .and(content.deletedAt.isNull()))
+                .orderBy(content.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        if (contentIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Content> contents = jpaQueryFactory
+                .selectFrom(content)
+                .leftJoin(content.contentTags, contentTag).fetchJoin()
+                .where(content.id.in(contentIds))
+                .orderBy(content.createdAt.desc())
+                .fetch();
+
+        Long totalCount = jpaQueryFactory
+                .select(content.count())
+                .from(content)
+                .join(content.contentTags, contentTag)
+                .join(contentTag.tag, tag)
+                .where(tag.tagName.eq(tagName)
+                        .and(content.complete.isTrue())
+                        .and(content.deletedAt.isNull()))
+                .fetchOne();
+
+        if (totalCount == null) {
+            totalCount = 0L;
+        }
+
+        return new PageImpl<>(contents, pageable, totalCount);
     }
 }

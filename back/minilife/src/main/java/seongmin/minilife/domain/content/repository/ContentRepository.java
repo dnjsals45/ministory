@@ -10,10 +10,4 @@ import java.util.List;
 
 public interface ContentRepository extends JpaRepository<Content, Long>, QContentRepository {
     boolean existsByIdAndUserId(Long contentId, Long userId);
-
-    @EntityGraph(attributePaths = {"contentTags"})
-    List<Content> findByCompleteTrue();
-
-    @EntityGraph(attributePaths = {"contentTags"})
-    Page<Content> findByCompleteTrue(Pageable pageable);
 }
