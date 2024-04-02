@@ -43,7 +43,6 @@ export default function MyEditor({ onChangeContent }) {
 
   const onUploadImage = async (blob, callback) => {
     await fetchUploadImage(blob).then((response) => {
-      console.log('response: ', response)
       callback(response.data.imageUrl, blob.name)
     })
     return false
