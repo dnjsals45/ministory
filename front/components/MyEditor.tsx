@@ -6,6 +6,17 @@ import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-sy
 import '@toast-ui/editor/dist/theme/toastui-editor-dark.css'
 import { Editor } from '@toast-ui/react-editor'
 
+export async function fetchUploadImage(blob): Promise<{ data: { imageUrl: string } }> {
+  const formData = new FormData()
+  formData.append('image', blob)
+
+  const response = await fetch('http://localhost:8080/api/v1/contents/image-upload', {
+    method: 'POST',
+    body: formData,
+  })
+  return response.json()
+}
+
 export default function MyEditor({ onChangeContent }) {
   const editorRef = useRef<Editor | null>(null)
   const toolbarItems = [
@@ -22,8 +33,16 @@ export default function MyEditor({ onChangeContent }) {
     if (editorRef.current) {
       const editorIns = editorRef.current.getInstance()
       const contentHtml = editorIns.getHTML()
-      onChangeContent(contentHtml) // 상위 컴포넌트로 에디터의 내용을 전달합니다.
+      onChangeContent(contentHtml)
     }
+  }
+
+  const onUploadImage = async (blob, callback) => {
+    await fetchUploadImage(blob).then((response) => {
+      console.log('response: ', response)
+      callback(response.data.imageUrl, blob.name)
+    })
+    return false
   }
 
   return (
@@ -39,6 +58,9 @@ export default function MyEditor({ onChangeContent }) {
         toolbarItems={toolbarItems}
         plugins={[colorSyntax]}
         onChange={handleContentChange}
+        hooks={{
+          addImageBlobHook: onUploadImage,
+        }}
       />
     </>
   )

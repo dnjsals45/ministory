@@ -6,6 +6,11 @@ import { useContext, useState } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { TagContext } from '@/components/hooks/useTag'
+import dynamic from 'next/dynamic'
+
+const MyEditorWithNoSSR = dynamic(() => import('@/components/MyEditor'), {
+  ssr: false,
+})
 
 export default function NewPost(props) {
   const id = props.params.id
@@ -118,7 +123,7 @@ export default function NewPost(props) {
       </div>
       <div className={'my-10'}>
         <div>태그 선택:</div>
-        <select value={selectedTags} onChange={handleSelectChange} className="dropdown-class">
+        <select value={selectedTags[0]} onChange={handleSelectChange} className="dropdown-class">
           <option value="none">선택하지 않음</option>
           {tags?.map((t) => (
             <option key={t.tagName} value={t.tagName}>
@@ -133,7 +138,7 @@ export default function NewPost(props) {
         )}
       </div>
       <div>
-        <MyEditor onChangeContent={handleBodyChange} />
+        <MyEditorWithNoSSR onChangeContent={handleBodyChange} />
       </div>
       <Button onClick={handleComplete}>글 생성</Button>
       <Button onClick={handleTemporary}>임시저장</Button>
