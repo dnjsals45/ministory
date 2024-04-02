@@ -15,6 +15,7 @@ public enum ContentErrorCode implements StatusCode {
      */
     DELETED_CONTENT(BAD_REQUEST, "삭제된 게시글입니다."),
     INVALID_CONTENT_ID(BAD_REQUEST, "존재하지 않는 게시글입니다."),
+    EMPTY_IMAGE(BAD_REQUEST, "요청에 이미지가 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

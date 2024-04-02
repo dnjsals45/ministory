@@ -1,18 +1,32 @@
 package seongmin.minilife.api.content.controller;
 
+import io.awspring.cloud.s3.ObjectMetadata;
+import io.awspring.cloud.s3.S3Resource;
+import io.awspring.cloud.s3.S3Template;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import seongmin.minilife.api.content.service.ContentService;
 import seongmin.minilife.common.auth.dto.CustomUserDetails;
 import seongmin.minilife.common.response.SuccessResponse;
+import seongmin.minilife.common.response.code.ContentErrorCode;
+import seongmin.minilife.common.response.exception.ContentErrorException;
 import seongmin.minilife.domain.content.dto.ModifyContentReq;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Tag(name = "게시글 API", description = "게시글 관련 API")
 @RestController
@@ -20,6 +34,7 @@ import seongmin.minilife.domain.content.dto.ModifyContentReq;
 @RequestMapping("/api/v1/contents")
 public class ContentController {
     private final ContentService contentService;
+
 
     @Operation(summary = "최근 게시물 9개 조회", description = "9개까지만 보여주기")
     @GetMapping("/recent")
@@ -77,5 +92,21 @@ public class ContentController {
                                              @RequestParam(name = "page") Long pageNum) {
         pageNum = pageNum == null ? 1 : pageNum;
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getTagContents(tagName, pageNum)));
+    }
+
+    @Operation(summary = "게시글 이미지 업로드", description = "게시글에 추가되는 이미지를 업로드")
+    @PostMapping("/image-upload")
+//    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> uploadImage(@RequestParam MultipartFile image) throws IOException {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.uploadImage(image)));
+    }
+
+    @Operation(summary = "게시글 이미지 렌더링", description = "프론트 callback 함수에서 들어와 렌더링된 이미지 데이터를 가져가게 됨")
+    @GetMapping(value = "/image-print", produces = {MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
+    public byte[] printEditorImage(@RequestParam String filepath) throws IOException {
+        File uploadedFile = new File(filepath);
+
+        return Files.readAllBytes(uploadedFile.toPath());
     }
 }
