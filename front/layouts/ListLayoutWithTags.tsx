@@ -10,6 +10,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { ContentItem } from '@/data/ContentItem'
 import { useContext, useEffect, useState } from 'react'
 import { TagContext } from '@/components/hooks/useTag'
+import process from 'process'
 
 interface PaginationProps {
   totalPages: number
@@ -62,9 +63,12 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
 async function fetchContentsData(
   pageNumber: number
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
-  const data = await fetch(`http://localhost:8080/api/v1/contents?page=${pageNumber}`, {
-    method: 'GET',
-  })
+  const data = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?page=${pageNumber}`,
+    {
+      method: 'GET',
+    }
+  )
   return data.json()
 }
 

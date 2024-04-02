@@ -5,15 +5,19 @@ import 'tui-color-picker/dist/tui-color-picker.css'
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css'
 import '@toast-ui/editor/dist/theme/toastui-editor-dark.css'
 import { Editor } from '@toast-ui/react-editor'
+import process from 'process'
 
 export async function fetchUploadImage(blob): Promise<{ data: { imageUrl: string } }> {
   const formData = new FormData()
   formData.append('image', blob)
 
-  const response = await fetch('http://localhost:8080/api/v1/contents/image-upload', {
-    method: 'POST',
-    body: formData,
-  })
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents/image-upload',
+    {
+      method: 'POST',
+      body: formData,
+    }
+  )
   return response.json()
 }
 

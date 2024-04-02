@@ -2,6 +2,7 @@
 
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { ContentTag } from '@/data/ContentTag'
+import process from 'process'
 
 const TagContext = createContext({
   tags: null as ContentTag[] | null,
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export async function fetchTagData(): Promise<{ data: { tags: ContentTag[] } }> {
-  const data = await fetch('http://localhost:8080/api/v1/tags/counts', {
+  const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/tags/counts', {
     method: 'GET',
   })
   return data.json()

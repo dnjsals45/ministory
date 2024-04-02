@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import process from 'process'
 
 interface newPostData {
   contentId: string
@@ -11,7 +12,10 @@ export async function createPost(requestOptions: {
   method: string
   headers: { 'Content-Type': string }
 }): Promise<{ data: newPostData }> {
-  const response = await fetch('http://localhost:8080/api/v1/contents', requestOptions)
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents',
+    requestOptions
+  )
 
   return response.json()
 }

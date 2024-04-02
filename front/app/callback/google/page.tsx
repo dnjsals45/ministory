@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useContext, useEffect } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
+import process from 'process'
 
 const GoogleCallback = () => {
   const router = useRouter()
@@ -13,9 +14,12 @@ const GoogleCallback = () => {
     const authorizationCode = url.searchParams.get('code')
 
     const fetchData = async () => {
-      await fetch('http://localhost:8080/api/v1/users/auth/google?code=' + authorizationCode, {
-        method: 'GET',
-      }).then((response) => {
+      await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/users/auth/google?code=' + authorizationCode,
+        {
+          method: 'GET',
+        }
+      ).then((response) => {
         const accessToken = response.headers.get('Access-Token')
         if (accessToken) localStorage.setItem('access-token', accessToken)
         getUserInfo()

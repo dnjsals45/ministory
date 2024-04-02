@@ -5,11 +5,12 @@ import { ContentDetail } from '@/data/ContentDetail'
 import { useEffect, useState } from 'react'
 import Comments from '@/components/Comments'
 import CommentInput from '@/components/CommentInput'
+import process from 'process'
 
 const Layout = MyPost
 
 async function fetchData(id: number): Promise<{ data: ContentDetail }> {
-  const data = await fetch(`http://localhost:8080/api/v1/contents/${id}`, {
+  const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',

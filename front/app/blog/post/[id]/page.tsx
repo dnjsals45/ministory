@@ -7,6 +7,7 @@ import { AuthContext } from '@/components/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { TagContext } from '@/components/hooks/useTag'
 import dynamic from 'next/dynamic'
+import process from 'process'
 
 const MyEditorWithNoSSR = dynamic(() => import('@/components/MyEditor'), {
   ssr: false,
@@ -28,23 +29,29 @@ export default function NewPost(props) {
       complete: true,
     }
 
-    const contentResponse = await fetch(`http://localhost:8080/api/v1/contents/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      body: JSON.stringify(content),
-    })
+    const contentResponse = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + accessToken,
+        },
+        body: JSON.stringify(content),
+      }
+    )
 
-    const tagResponse = await fetch(`http://localhost:8080/api/v1/contents/${id}/tags`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      body: JSON.stringify({ tags: selectedTags }),
-    })
+    const tagResponse = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + accessToken,
+        },
+        body: JSON.stringify({ tags: selectedTags }),
+      }
+    )
 
     if (contentResponse.ok && tagResponse.ok) {
       alert('게시글 작성 성공!')
@@ -62,23 +69,29 @@ export default function NewPost(props) {
       complete: false,
     }
 
-    const contentResponse = await fetch(`http://localhost:8080/api/v1/contents/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      body: JSON.stringify(content),
-    })
+    const contentResponse = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + accessToken,
+        },
+        body: JSON.stringify(content),
+      }
+    )
 
-    const tagResponse = await fetch(`http://localhost:8080/api/v1/contents/${id}/tags`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      body: JSON.stringify({ tags: selectedTags }),
-    })
+    const tagResponse = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + accessToken,
+        },
+        body: JSON.stringify({ tags: selectedTags }),
+      }
+    )
 
     if (contentResponse.ok && tagResponse.ok) {
       alert('게시글 임시저장 성공!')

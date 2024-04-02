@@ -3,14 +3,18 @@
 import { useEffect, useState } from 'react'
 import { CommentItem } from '@/data/CommentItem'
 import { Divider, List, ListItem, ListItemText } from '@mui/material'
+import process from 'process'
 
 async function fetchComment(id: number): Promise<{ data: CommentItem[] }> {
-  const data = await fetch(`http://localhost:8080/api/v1/contents/${id}/comments`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-    },
-  })
+  const data = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/comments`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    }
+  )
   return data.json()
 }
 export default function Comments({ contentId, refreshComments }) {

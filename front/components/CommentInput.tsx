@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { useEffect, useState } from 'react'
+import process from 'process'
 
 export default function CommentInput({ contentId, onCommentAdded }) {
   const [accessToken, setAccessToken] = useState<string>()
@@ -35,7 +36,7 @@ export default function CommentInput({ contentId, onCommentAdded }) {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/v1/contents/${contentId}/comments`,
+        process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${contentId}/comments`,
         requestOptions
       )
 

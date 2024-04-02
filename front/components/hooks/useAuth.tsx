@@ -2,6 +2,7 @@
 
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { UserInfo } from '@/data/UserInfo'
+import process from 'process'
 
 const AuthContext = createContext({
   accessToken: '',
@@ -22,7 +23,10 @@ export async function fetchUserInfo(accessToken: string): Promise<{ data: UserIn
     },
   }
 
-  const response = await fetch('http://localhost:8080/api/v1/users', requestOptions)
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/users',
+    requestOptions
+  )
   return response.json()
 }
 const AuthProvider = ({ children }: Props) => {
