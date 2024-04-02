@@ -34,6 +34,17 @@ spring:
             scope:
               - profile
               - email
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_S3_IAM_ACCESS_KEY}
+        secret-key: ${AWS_S3_IAM_SECRET_KEY}
+      s3:
+        bucket: ${AWS_S3_BUCKET}
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false
 
 jwt:
   secret:
@@ -53,14 +64,3 @@ springdoc:
   api-docs:
     groups:
       enabled: true
-
-cloud:
-  aws:
-    credentials:
-      access-key: ${AWS_S3_IAM_ACCESS_KEY}
-      secret-key: ${AWS_S3_IAM_SECRET_KEY}
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-    bucket: ${AWS_S3_BUCKET}
