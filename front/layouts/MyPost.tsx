@@ -3,6 +3,8 @@ import ScrollTopAndComment from '@/components/ScrollTopAndComment'
 import PageTitle from '@/components/PageTitle'
 import dynamic from 'next/dynamic'
 import { ContentDetail } from '@/data/ContentDetail'
+import { router } from 'next/client'
+import { useRouter } from 'next/navigation'
 
 const Viewer = dynamic(() => import('@toast-ui/react-editor').then((module) => module.Viewer), {
   ssr: false,
@@ -13,7 +15,12 @@ interface LayoutProps {
 }
 
 export default function MyPost({ content }: LayoutProps) {
+  const router = useRouter()
   const dateTime = content.content.createdAt.toString().split('T')[0]
+
+  function handleEditButton(id: number) {
+    router.push(`/blog/edit/${id}`)
+  }
 
   return (
     <SectionContainer>
@@ -34,7 +41,12 @@ export default function MyPost({ content }: LayoutProps) {
                 <PageTitle>{content.content.title}</PageTitle>
               </div>
               <div>
-                <button className="ml-4 rounded-lg bg-blue-500 px-4 py-2 text-white">수정</button>
+                <button
+                  className="ml-4 rounded-lg bg-blue-500 px-4 py-2 text-white"
+                  onClick={() => handleEditButton(content.content.contentId)}
+                >
+                  수정
+                </button>
                 <button className="ml-2 rounded-lg bg-red-500 px-4 py-2 text-white">삭제</button>
               </div>
             </div>
