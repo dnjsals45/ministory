@@ -47,6 +47,9 @@ dependencies {
     // Jsoup (Html 파싱)
     implementation 'org.jsoup:jsoup:1.17.2'
 
+    // CommonMark (Markdown 문법)
+    implementation 'org.commonmark:commonmark:0.22.0'
+
     // Query Dsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
