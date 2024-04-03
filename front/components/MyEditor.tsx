@@ -36,8 +36,9 @@ export default function MyEditor({ onChangeContent }) {
   const handleContentChange = () => {
     if (editorRef.current) {
       const editorIns = editorRef.current.getInstance()
-      const contentHtml = editorIns.getHTML()
-      onChangeContent(contentHtml)
+      // const content = editorIns.getHTML()
+      const content = editorIns.getMarkdown()
+      onChangeContent(content)
     }
   }
 
@@ -53,9 +54,10 @@ export default function MyEditor({ onChangeContent }) {
       <Editor
         ref={editorRef}
         initialValue=""
-        initialEditType="wysiwyg"
+        // initialEditType="wysiwyg"
         hideModeSwitch={true}
-        // previewStyle="vertical" // markdown 타입에서만 유효
+        initialEditType="markdown"
+        previewStyle="vertical" // markdown 타입에서만 유효
         height="500px"
         usageStatistics={false}
         toolbarItems={toolbarItems}
