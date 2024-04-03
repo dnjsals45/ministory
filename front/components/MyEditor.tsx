@@ -6,6 +6,8 @@ import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-sy
 import '@toast-ui/editor/dist/theme/toastui-editor-dark.css'
 import { Editor } from '@toast-ui/react-editor'
 import process from 'process'
+import fieldTypes from 'rehype-citation/node/src/citation-js/plugin-bibtex/input/fieldTypes'
+import title = fieldTypes.title
 
 export async function fetchUploadImage(blob): Promise<{ data: { imageUrl: string } }> {
   const formData = new FormData()
@@ -21,7 +23,7 @@ export async function fetchUploadImage(blob): Promise<{ data: { imageUrl: string
   return response.json()
 }
 
-export default function MyEditor({ onChangeContent }) {
+export default function MyEditor({ onChangeContent, initialValue }) {
   const editorRef = useRef<Editor | null>(null)
   const toolbarItems = [
     ['heading', 'bold', 'italic', 'strike'],
@@ -53,12 +55,12 @@ export default function MyEditor({ onChangeContent }) {
     <>
       <Editor
         ref={editorRef}
-        initialValue=""
+        initialValue={initialValue}
         // initialEditType="wysiwyg"
         hideModeSwitch={true}
         initialEditType="markdown"
         previewStyle="vertical" // markdown 타입에서만 유효
-        height="500px"
+        height="800px"
         usageStatistics={false}
         toolbarItems={toolbarItems}
         plugins={[colorSyntax]}
