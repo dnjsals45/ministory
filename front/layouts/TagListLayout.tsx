@@ -84,7 +84,6 @@ export default function ListLayoutWithTags({ title, tagName }: ListLayoutProps) 
   useEffect(() => {
     const fetchContents = async () => {
       const contentsData = await fetchTagContentsData(pageNumber, tagName)
-      console.log('data: ', contentsData)
       setContents(contentsData.data.contents)
       setPagination({
         currentPage: pageNumber,

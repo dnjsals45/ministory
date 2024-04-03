@@ -141,7 +141,7 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
                           <h2 className="text-2xl font-bold leading-8 tracking-tight">
                             <Link
                               href={`/blog/${content.contentId}`}
-                              className="text-gray-900 dark:text-gray-100"
+                              className="text-gray-900 hover:text-gray-500 dark:text-gray-100"
                             >
                               {content.title}
                             </Link>

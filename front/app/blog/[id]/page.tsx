@@ -9,7 +9,7 @@ import process from 'process'
 
 const Layout = MyPost
 
-async function fetchData(id: number): Promise<{ data: ContentDetail }> {
+async function fetchContentData(id: number): Promise<{ data: ContentDetail }> {
   const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`, {
     method: 'GET',
     headers: {
@@ -26,7 +26,7 @@ export default function Content(props) {
 
   useEffect(() => {
     const contentData = async (id: number) => {
-      const response = await fetchData(id)
+      const response = await fetchContentData(id)
       setDetail(response.data)
     }
 

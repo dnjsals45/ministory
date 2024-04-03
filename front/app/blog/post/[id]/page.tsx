@@ -1,6 +1,5 @@
 'use client'
 
-import MyEditor from '@/components/MyEditor'
 import { Button, TextField } from '@mui/material'
 import { useContext, useState } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
