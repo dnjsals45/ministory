@@ -60,7 +60,7 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
   )
 }
 
-async function fetchContentsData(
+export async function fetchContentsData(
   pageNumber: number
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
   const data = await fetch(

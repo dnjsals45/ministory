@@ -22,6 +22,10 @@ export default function MyPost({ content }: LayoutProps) {
     router.push(`/blog/edit/${id}`)
   }
 
+  function handleDeleteContentButton(id: number) {
+    router.push(`/blog/delete/${id}`)
+  }
+
   return (
     <SectionContainer>
       <ScrollTopAndComment />
@@ -47,7 +51,12 @@ export default function MyPost({ content }: LayoutProps) {
                 >
                   수정
                 </button>
-                <button className="ml-2 rounded-lg bg-red-500 px-4 py-2 text-white">삭제</button>
+                <button
+                  className="ml-2 rounded-lg bg-red-500 px-4 py-2 text-white"
+                  onClick={() => handleDeleteContentButton(content.content.contentId)}
+                >
+                  삭제
+                </button>
               </div>
             </div>
           </header>
