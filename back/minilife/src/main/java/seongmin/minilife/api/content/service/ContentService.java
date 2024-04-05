@@ -75,6 +75,7 @@ public class ContentService {
         Content content = contentUtilService.findById(contentId);
 
         content.softDelete();
+        contentUtilService.save(content);
     }
 
     @Transactional(readOnly = true)
