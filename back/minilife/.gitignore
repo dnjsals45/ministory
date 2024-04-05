@@ -37,3 +37,9 @@ out/
 ### VS Code ###
 .vscode/
 **/generated
+
+### Dockfile ###
+Dockerfile
+
+### env files ###
+.env

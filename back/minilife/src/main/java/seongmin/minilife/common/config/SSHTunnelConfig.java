@@ -28,6 +28,8 @@ public class SSHTunnelConfig {
     private String privateKey;
     @Value("${ssh.user}")
     private String sshUser;
+    @Value("${ssh.password}")
+    private String password;
     @Value("${ssh.database-port}")
     private int databasePort;
 
@@ -44,19 +46,16 @@ public class SSHTunnelConfig {
         Integer forwardedPort = null;
 
         try {
-            log.info("user: {}", sshUser);
-            log.info("host: {}", host);
-            log.info("port: {}", port);
-            log.info("databasePort: {}", databasePort);
-            log.info("pem: {}", privateKey);
             log.info("{}@{}:{}:{} with privateKey", sshUser, host, port, databasePort);
 
             log.info("Start SSH Tunneling");
 
             JSch jSch = new JSch();
 
-            jSch.addIdentity(privateKey);
+//            jSch.addIdentity(privateKey); // pem 키 사용
             session = jSch.getSession(sshUser, host, port);
+            session.setPassword(password);
+
             Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);

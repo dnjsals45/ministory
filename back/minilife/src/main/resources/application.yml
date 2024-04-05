@@ -7,6 +7,7 @@ ssh:
   port: ${SSH_PORT}
   pem: ${SSH_PEM}
   database-port: ${SSH_DATABASE_PORT}
+  password: ${SSH_PASSWD}
 
 spring:
   datasource:
