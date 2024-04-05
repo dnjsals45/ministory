@@ -108,7 +108,7 @@ export default function EditContent(props) {
 
   return (
     <div>
-      {title && body && (
+      {
         <div>
           <div className={'my-10'}>
             <h1>제목</h1>
@@ -146,7 +146,7 @@ export default function EditContent(props) {
           </div>
           <Button onClick={handleEditComplete}>수정하기</Button>
         </div>
-      )}
+      }
     </div>
   )
 }
