@@ -12,9 +12,11 @@ const Viewer = dynamic(() => import('@toast-ui/react-editor').then((module) => m
 
 interface LayoutProps {
   content: ContentDetail
+  userRole: string | undefined
 }
 
-export default function MyPost({ content }: LayoutProps) {
+export default function MyPost({ content, userRole }: LayoutProps) {
+  console.log('userRole: ', userRole)
   const router = useRouter()
   const dateTime = content.content.createdAt.toString().split('T')[0]
 
@@ -45,18 +47,22 @@ export default function MyPost({ content }: LayoutProps) {
                 <PageTitle>{content.content.title}</PageTitle>
               </div>
               <div>
-                <button
-                  className="ml-4 rounded-lg bg-blue-500 px-4 py-2 text-white"
-                  onClick={() => handleEditButton(content.content.contentId)}
-                >
-                  수정
-                </button>
-                <button
-                  className="ml-2 rounded-lg bg-red-500 px-4 py-2 text-white"
-                  onClick={() => handleDeleteContentButton(content.content.contentId)}
-                >
-                  삭제
-                </button>
+                {userRole === 'ROLE_ADMIN' && (
+                  <button
+                    className="ml-4 rounded-lg bg-blue-500 px-4 py-2 text-white"
+                    onClick={() => handleEditButton(content.content.contentId)}
+                  >
+                    수정
+                  </button>
+                )}
+                {userRole === 'ROLE_ADMIN' && (
+                  <button
+                    className="ml-2 rounded-lg bg-red-500 px-4 py-2 text-white"
+                    onClick={() => handleDeleteContentButton(content.content.contentId)}
+                  >
+                    삭제
+                  </button>
+                )}
               </div>
             </div>
           </header>

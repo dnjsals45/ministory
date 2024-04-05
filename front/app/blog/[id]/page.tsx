@@ -2,10 +2,11 @@
 
 import MyPost from '@/layouts/MyPost'
 import { ContentDetail } from '@/data/ContentDetail'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Comments from '@/components/Comments'
 import CommentInput from '@/components/CommentInput'
 import process from 'process'
+import { AuthContext } from '@/components/hooks/useAuth'
 
 const Layout = MyPost
 
@@ -22,7 +23,8 @@ async function fetchContentData(id: number): Promise<{ data: ContentDetail }> {
 export default function Content(props) {
   const id = props.params.id
   const [detail, setDetail] = useState<ContentDetail | undefined>(undefined)
-  const [refreshComments, setRefreshComments] = useState(false) // 댓글 목록을 새로고침하기 위한 상태 추가
+  const [refreshComments, setRefreshComments] = useState(false)
+  const { userInfo } = useContext(AuthContext)
 
   useEffect(() => {
     const contentData = async (id: number) => {
@@ -42,7 +44,7 @@ export default function Content(props) {
       {detail && (
         <>
           <div>
-            <Layout content={detail} />
+            <Layout content={detail} userRole={userInfo?.role} />
           </div>
           <div>
             <Comments contentId={detail.content.contentId} refreshComments={refreshComments} />
