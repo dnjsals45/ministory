@@ -16,7 +16,6 @@ interface LayoutProps {
 }
 
 export default function MyPost({ content, userRole }: LayoutProps) {
-  console.log('userRole: ', userRole)
   const router = useRouter()
   const dateTime = content.content.createdAt.toString().split('T')[0]
 

@@ -28,7 +28,7 @@ const GoogleCallback = () => {
     }
 
     fetchData()
-  }, [])
+  }, [getUserInfo, router])
 
   return null
 }

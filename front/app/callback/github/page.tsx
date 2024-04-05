@@ -28,7 +28,7 @@ const GithubCallback = () => {
     }
 
     fetchData()
-  }, [])
+  }, [getUserInfo, router])
 
   return null
 }

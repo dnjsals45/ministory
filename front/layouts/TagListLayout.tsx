@@ -92,7 +92,7 @@ export default function ListLayoutWithTags({ title, tagName }: ListLayoutProps) 
     }
 
     fetchContents()
-  }, [pageNumber])
+  }, [pageNumber, tagName])
 
   return (
     <>
