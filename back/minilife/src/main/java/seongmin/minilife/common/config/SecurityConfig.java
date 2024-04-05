@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
     private final CustomJwtFilter customJwtFilter;
     private final CustomJwtExceptionFilter customJwtExceptionFilter;
-    private List<String> corsOrigins = List.of("http://localhost:3000");
+    private final List<String> corsOrigins = List.of("http://localhost:3000");
     private final String[] publicReadOnlyUrl = {
             "/favicon.ico",
             "/api-docs/**",

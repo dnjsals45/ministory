@@ -33,7 +33,6 @@ public class SSHDataSourceConfig {
                 .url(url)
                 .username(username)
                 .password(password)
-                .driverClassName("com.mysql.cj.jdbc.Driver") // todo - env
                 .build();
     }
 }
