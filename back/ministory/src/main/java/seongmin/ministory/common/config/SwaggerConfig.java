@@ -14,7 +14,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("MiniLife API 명세서")
+                        .title("MiniStory API 명세서")
                         .description("API 명세서")
                         .version("v1"))
                 .components(new Components()

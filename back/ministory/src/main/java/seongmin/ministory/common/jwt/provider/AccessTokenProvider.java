@@ -33,7 +33,7 @@ public class AccessTokenProvider implements TokenProvider {
                 .header()
                 .add(createHeader())
                 .and()
-                .claims(createClaims("MiniLife-access", tokenInfo))
+                .claims(createClaims("MiniStory-access", tokenInfo))
                 .expiration(createExpiration(now, tokenExpiration.toMillis()))
                 .issuedAt(now)
                 .signWith(signature)
