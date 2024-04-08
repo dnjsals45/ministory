@@ -1,13 +1,13 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'MiniLife',
+  title: 'MiniStory',
   author: 'Seongmin',
-  headerTitle: 'MiniLife',
+  headerTitle: 'MiniStory',
   description: '백엔드 개발자가 혼자 만들어가는 블로그',
   language: 'ko-KR',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
-  siteRepo: 'https://github.com/timlrx/tailwind-nextjs-starter-blog',
+  siteRepo: 'https://github.com/dnjsals45/ministory',
   // 사이트 상단 로고 이미지 변경
   siteLogo: '/static/images/dog.png',
   socialBanner: '/static/images/twitter-card.png',

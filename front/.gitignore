@@ -44,3 +44,4 @@ yarn-error.log*
 # Contentlayer
 .contentlayer
 .gitattributes
+Dockerfile
