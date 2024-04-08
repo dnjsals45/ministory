@@ -1,6 +1,7 @@
 package seongmin.minilife.common.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,12 +35,13 @@ public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
     private final CustomJwtFilter customJwtFilter;
     private final CustomJwtExceptionFilter customJwtExceptionFilter;
-    private final List<String> corsOrigins = List.of("http://localhost:3000");
     private final String[] publicReadOnlyUrl = {
             "/favicon.ico",
             "/api-docs/**",
             "/v3/api-docs/**", "/swagger-ui/**", "/swagger",
     };
+    @Value("${spring.cors.allowed-origins}")
+    private List<String> corsOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
