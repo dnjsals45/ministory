@@ -24,8 +24,6 @@ public class SSHTunnelConfig {
     private String host;
     @Value("${ssh.port}")
     private int port;
-    @Value("${ssh.pem}")
-    private String privateKey;
     @Value("${ssh.user}")
     private String sshUser;
     @Value("${ssh.password}")
@@ -52,7 +50,6 @@ public class SSHTunnelConfig {
 
             JSch jSch = new JSch();
 
-//            jSch.addIdentity(privateKey); // pem 키 사용
             session = jSch.getSession(sshUser, host, port);
             session.setPassword(password);
 
