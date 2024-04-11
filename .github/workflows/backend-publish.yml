@@ -29,7 +29,7 @@ jobs:
     name: Deploy Docker Image
     runs-on: ubuntu-latest
     env:
-      REPO: ${{ secrets.DOCKER_REPO }}
+      REPO: ${{ secrets.DOCKER_BACK_REPO }}
     steps:
 
       # JDK 17 세팅
