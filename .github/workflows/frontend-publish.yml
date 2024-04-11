@@ -1,0 +1,80 @@
+name: Frontend Continuous Deployment
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log Level"
+        required: true
+        default: "warning"
+        type: choice
+        options:
+          - info
+          - warning
+          - error
+      enviornment:
+        description: "Environment"
+        required: false
+        type: environment
+
+permissions:
+  contents: read
+
+jobs:
+  docker:
+    name: Deploy Frontend Docker Image
+    runs-on: ubuntu-latest
+    env:
+      REPO: ${{ secrets.DOCKER_FRONT_REPO }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up node 21
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+          
+      - name: Build Docker Image
+        run: docker build -t $REPO .
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWD }}
+
+      - name: Publish Docker Image
+        run: docker push $REPO:latest
+
+      - name: Get Github Actions IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Add Github Actions IP to Security Group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      - name: SSH Commands
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.AWS_SSH_HOST }}
+          username: ${{ secrets.AWS_SSH_USER }}
+          password: ${{ secrets.AWS_SSH_PASSWD }}
+          port: ${{ secrets.AWS_SSH_PORT }}
+          script: |
+            ./ministory_frontend_deploy.sh
+
+      - name: Remove Github Actions IP from Security Group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
