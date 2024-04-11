@@ -16,7 +16,7 @@ on:
           - info
           - warning
           - error
-      enviornment:
+      environment:
         description: "Environment"
         required: false
         type: environment
