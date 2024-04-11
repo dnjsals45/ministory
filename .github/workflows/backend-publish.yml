@@ -54,7 +54,7 @@ jobs:
 
       - name: Generate keystore
         run: |
-        keytool -genkeypair -alias $KEYALIAS -keyalg RSA -keysize 2048 -storetype $STORETYPE -keystore keystore.p12 -validity 3650 -storepass $STOREPASSWORD -dname "CN=$KEYDOMAIN, OU=backend, O=ministory, L=Seoul, S=Seoul, C=KR"
+          keytool -genkeypair -alias $KEYALIAS -keyalg RSA -keysize 2048 -storetype $STORETYPE -keystore keystore.p12 -validity 3650 -storepass $STOREPASSWORD -dname "CN=$KEYDOMAIN, OU=backend, O=ministory, L=Seoul, S=Seoul, C=KR"
 
       - name: Move keystore to resources
         run: |
