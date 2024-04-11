@@ -47,7 +47,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         }
 
         if (isAnonymousRequest(request)) {
-//            log.info("JWT Filter: Anonymous request: {}", request.getRequestURI());
+            log.info("JWT Filter: Anonymous request: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
