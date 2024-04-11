@@ -39,7 +39,9 @@ jobs:
           node-version: 21
           
       - name: Build Docker Image
-        run: docker build -t $REPO .
+        run: |
+          ENV_ARGS=$(echo '${{ secrets.ENV_VARIABLES }}' | jq -r 'to_entries|map("--build-arg \(.key)=\(.value|tostring)")|.[]' | xargs)
+          docker build -t $REPO $ENV_ARGS .
         working-directory: ./front
 
       - name: Login to Docker Hub
