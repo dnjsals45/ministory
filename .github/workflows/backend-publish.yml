@@ -55,11 +55,13 @@ jobs:
       - name: Generate keystore
         run: |
           keytool -genkeypair -alias $KEYALIAS -keyalg RSA -keysize 2048 -storetype $STORETYPE -keystore keystore.p12 -validity 3650 -storepass $STOREPASSWORD -dname "CN=$KEYDOMAIN, OU=backend, O=ministory, L=Seoul, S=Seoul, C=KR"
+        working-directory: ./back/ministory
 
       - name: Move keystore to resources
         run: |
           mkdir -p ./src/main/resources
           mv keystore.p12 ./src/main/resources/keystore.p12
+        working-directory: ./back/ministory
 
       - name: execute permission for gradlew
         run: chmod +x gradlew
