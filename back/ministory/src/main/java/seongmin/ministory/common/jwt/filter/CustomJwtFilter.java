@@ -39,6 +39,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.warn("CI/CD OK");
 //        log.warn("request: {}@{}", request.getMethod(), request.getRequestURI());
         if (ignoreTokenRequest(request)) {
 //            log.info("JWT Filter: Ignoring request: {}", request.getRequestURI());
