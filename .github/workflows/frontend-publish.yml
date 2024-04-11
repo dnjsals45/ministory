@@ -40,8 +40,12 @@ jobs:
           
       - name: Build Docker Image
         run: |
-          ENV_ARGS=$(echo '${{ secrets.ENV_VARIABLES }}' | jq -r 'to_entries|map("--build-arg \(.key)=\(.value|tostring)")|.[]' | xargs)
-          docker build -t $REPO $ENV_ARGS .
+          docker build -t $REPO \
+          --build-arg NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }} \
+          --build-arg NEXT_PUBLIC_GITHUB_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GITHUB_CLIENT_ID }} \
+          --build-arg NEXT_PUBLIC_GITHUB_REDIRECT_URI=${{ secrets.NEXT_PUBLIC_GITHUB_REDIRECT_URI }} \
+          --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} \
+          --build-arg NEXT_PUBLIC_GOOGLE_REDIRECT_URI=${{ secrets.NEXT_PUBLIC_GOOGLE_REDIRECT_URI }} .
         working-directory: ./front
 
       - name: Login to Docker Hub
