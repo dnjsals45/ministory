@@ -39,16 +39,15 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.warn("CI/CD OK");
-//        log.warn("request: {}@{}", request.getMethod(), request.getRequestURI());
+        log.warn("request: {}@{}", request.getMethod(), request.getRequestURI());
         if (ignoreTokenRequest(request)) {
-//            log.info("JWT Filter: Ignoring request: {}", request.getRequestURI());
+            log.info("JWT Filter: Ignoring request: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
 
         if (isAnonymousRequest(request)) {
-//            log.info("JWT Filter: Anonymous request: {}", request.getRequestURI());
+            log.info("JWT Filter: Anonymous request: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
