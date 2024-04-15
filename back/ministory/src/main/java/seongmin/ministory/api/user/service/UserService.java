@@ -81,7 +81,7 @@ public class UserService {
         body.add("redirect_uri", githubRedirectUri);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, httpHeaders);
-        log.info("Before Get AccessToken");
+//        log.info("Before Get AccessToken");
 
         ResponseEntity<Map> responseEntity = restTemplate.exchange(
                 tokenUrl,
