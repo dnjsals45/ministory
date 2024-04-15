@@ -27,6 +27,7 @@ public class JwtExceptionUtil {
     public static AuthErrorException determineAuthErrorException(Exception e) {
         return findAuthErrorException(e).orElseGet(
                 () -> {
+                    e.printStackTrace();
                     AuthErrorCode authErrorCode = ERROR_CODE_MAP.getOrDefault(e.getClass(), AuthErrorCode.UNEXPECTED_ERROR);
                     return new AuthErrorException(authErrorCode, authErrorCode.getMessage());
                 }

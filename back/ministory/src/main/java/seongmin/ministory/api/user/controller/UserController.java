@@ -62,6 +62,7 @@ public class UserController {
                                    @PathVariable(name = "provider") String provider,
                                    @RequestParam("code") String authorizationCode) {
         String authorizationToken;
+        log.info("Login with {}", provider);
         switch (provider) {
             case "github" -> authorizationToken = userService.getAccessTokenFromGithub(authorizationCode);
             case "google" -> authorizationToken = userService.getAccessTokenFromGoogle(authorizationCode);
@@ -74,6 +75,7 @@ public class UserController {
             default -> throw new AuthErrorException(AuthErrorCode.UNKNOWN_PROVIDER, "존재하지 않는 프로바이더 입니다.");
         }
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
+        log.info("AT: {}", accessToken);
 
 
         return ResponseEntity.ok().header("Access-Token", accessToken).body(SuccessResponse.noContent());
