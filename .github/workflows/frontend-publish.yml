@@ -55,7 +55,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWD }}
 
       - name: Publish Docker Image
-        run: docker push $REPO:latest
+        run: docker push $REPO:${{ github.sha }}
 
       - name: Get Github Actions IP
         id: ip
