@@ -60,12 +60,6 @@ public class OAuthAttribute {
                 .build();
     }
 
-
-//    public OAuthAttribute updateUserId(Long userId) {
-//        this.userId = userId;
-//        return this;
-//    }
-
     public User toEntity() {
         return User.builder()
                 .email(email)
