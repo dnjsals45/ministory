@@ -52,8 +52,12 @@ jobs:
         run: chmod +x gradlew
         working-directory: ./back/ministory
 
-      - name: build docker
+      - name: build latest docker
         run: ./gradlew bootBuildImage --imageName=$REPO
+        working-directory: ./back/ministory
+
+      - name: build version docker
+        run: ./gradlew bootBuildImage --imageName=$REPO:${{ github.sha }}
         working-directory: ./back/ministory
 
       - name: Login to Docker Hub
