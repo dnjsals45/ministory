@@ -17,11 +17,11 @@ import javax.sql.DataSource;
 public class SSHDataSourceConfig {
     private final SSHTunnelConfig sshTunnelConfig;
 
-    @Value("${DB_URL}")
+    @Value("${spring.datasource.url}")
     private String url;
-    @Value("${DB_USER}")
+    @Value("${spring.datasource.username}")
     private String username;
-    @Value("${DB_PASSWORD}")
+    @Value("${spring.datasource.password}")
     private String password;
 
     @Bean(name="dataSource")

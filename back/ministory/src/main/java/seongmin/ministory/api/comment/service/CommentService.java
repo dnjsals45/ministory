@@ -2,6 +2,7 @@ package seongmin.ministory.api.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import seongmin.ministory.api.content.service.ContentUtilService;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
@@ -50,6 +51,7 @@ public class CommentService {
         return CreateCommentRes.from(newComment);
     }
 
+    @Transactional
     public ModifyCommentRes modifyComment(Long contentId, Long commentId, ModifyCommentReq req) {
         contentUtilService.findById(contentId);
 
@@ -60,6 +62,7 @@ public class CommentService {
         return ModifyCommentRes.of(comment.getId(), comment.getUpdatedAt());
     }
 
+    @Transactional
     public void deleteComment(Long contentId, Long commentId) {
         contentUtilService.findById(contentId);
 
