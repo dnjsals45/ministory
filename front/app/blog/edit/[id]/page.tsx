@@ -31,7 +31,7 @@ export default function EditContent(props) {
   const [body, setBody] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const { accessToken } = useContext(AuthContext)
-  const { tags, fetchTags } = useContext(TagContext)
+  const { tags, fetchContentTag, fetchRegisterTag } = useContext(TagContext)
 
   useEffect(() => {
     const contentData = async (id: number) => {
@@ -78,6 +78,8 @@ export default function EditContent(props) {
     if (contentResponse.ok) {
       alert('게시글 수정 성공!')
       // fetchTags()
+      // fetchContentTag()
+      // fetchRegisterTag()
       router.push('/blog')
     } else {
       alert('게시글 수정 실패....')

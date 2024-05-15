@@ -19,7 +19,7 @@ export default function NewPost(props) {
   const [body, setBody] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const { accessToken } = useContext(AuthContext)
-  const { tags, fetchTags } = useContext(TagContext)
+  const { tags, fetchContentTag, fetchRegisterTag } = useContext(TagContext)
 
   const handleComplete = async () => {
     const content = {
@@ -54,7 +54,9 @@ export default function NewPost(props) {
 
     if (contentResponse.ok && tagResponse.ok) {
       alert('게시글 작성 성공!')
-      fetchTags()
+      fetchContentTag()
+      fetchRegisterTag()
+
       router.push('/blog')
     } else if (!contentResponse.ok) {
       alert('게시글 작성 실패....')
