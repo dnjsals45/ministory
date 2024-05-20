@@ -79,7 +79,7 @@ export default function ListLayoutWithTags({ title, tagName }: ListLayoutProps) 
   const pageNumber = params !== null ? parseInt(params) : 1
   const [contents, setContents] = useState<ContentItem[]>([])
   const [pagination, setPagination] = useState<PaginationProps | null>(null)
-  const { tags } = useContext(TagContext)
+  const { contentTags } = useContext(TagContext)
 
   useEffect(() => {
     const fetchContents = async () => {
@@ -107,7 +107,7 @@ export default function ListLayoutWithTags({ title, tagName }: ListLayoutProps) 
             <div className="px-6 py-4">
               <h3 className="font-bold uppercase text-primary-500">Category</h3>
               <ul>
-                {tags?.map((t) => {
+                {contentTags?.map((t) => {
                   return (
                     <li key={t.tagName} className="my-3">
                       <Link
