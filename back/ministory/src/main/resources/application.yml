@@ -129,9 +129,11 @@ spring:
 jwt:
   secret:
     access-secret-key: ${JWT_ACCESS_SECRET}
+    refresh-secret-key: ${JWT_REFRESH_SECRET}
   token:
     access-expiration: 3600000 # 1시간(1000(ms) * 60(m) * 60(h))
     access-header: Authorization
+    refresh-expiration: 604800000 # 7일(1000(ms) * 60(m) * 60(h) * 24(h))
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8

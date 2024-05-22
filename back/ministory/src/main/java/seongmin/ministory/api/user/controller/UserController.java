@@ -14,6 +14,8 @@ import seongmin.ministory.api.user.service.UserService;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
+import seongmin.ministory.common.jwt.provider.AccessTokenProvider;
+import seongmin.ministory.common.jwt.provider.RefreshTokenProvider;
 import seongmin.ministory.common.jwt.provider.TokenProvider;
 import seongmin.ministory.common.response.SuccessResponse;
 import seongmin.ministory.common.response.code.AuthErrorCode;
@@ -29,6 +31,7 @@ import java.io.IOException;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final TokenProvider accessTokenProvider;
+    private final TokenProvider refreshTokenProvider;
     private final UserService userService;
     private final UserUtilService userUtilService;
 
@@ -75,7 +78,9 @@ public class UserController {
             default -> throw new AuthErrorException(AuthErrorCode.UNKNOWN_PROVIDER, "존재하지 않는 프로바이더 입니다.");
         }
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
-        log.info("AT: {}", accessToken);
+        String refreshToken = refreshTokenProvider.generateToken(tokenInfo);
+
+        log.info("RT: {}", refreshToken);
 
 
         return ResponseEntity.ok().header("Access-Token", accessToken).body(SuccessResponse.noContent());
