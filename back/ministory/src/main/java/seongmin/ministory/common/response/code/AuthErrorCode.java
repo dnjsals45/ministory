@@ -14,6 +14,7 @@ public enum AuthErrorCode implements StatusCode {
      * 400 BAD_REQUEST
      */
     EMPTY_ACCESS_TOKEN(BAD_REQUEST, "액세스 토큰이 비어있습니다."),
+    EMPTY_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 비어있습니다."),
     UNKNOWN_PROVIDER(BAD_REQUEST, "알 수 없는 프로바이더입니다."),
 
     /**
@@ -26,6 +27,7 @@ public enum AuthErrorCode implements StatusCode {
     WRONG_JWT_TOKEN(UNAUTHORIZED, "잘못된 토큰입니다(default)"),
     REFRESH_TOKEN_NOT_FOUND(UNAUTHORIZED, "없거나 삭제된 리프래시 토큰입니다."),
     UNSUPPORTED_JWT_TOKEN(UNAUTHORIZED, "지원하지 않는 토큰입니다"),
+    NEED_LOGIN(UNAUTHORIZED, "로그인이 필요합니다."),
 
     /**
      * 500 INTERNAL_SERVER_ERROR

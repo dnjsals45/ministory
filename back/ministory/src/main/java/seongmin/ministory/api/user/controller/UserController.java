@@ -3,9 +3,11 @@ package seongmin.ministory.api.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,7 +65,8 @@ public class UserController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> login(@Parameter(name = "provider", description = "google, github")
                                    @PathVariable(name = "provider") String provider,
-                                   @RequestParam("code") String authorizationCode) {
+                                   @RequestParam("code") String authorizationCode,
+                                   HttpServletResponse response) {
         String authorizationToken;
         log.info("Login with {}", provider);
         switch (provider) {
@@ -80,8 +83,15 @@ public class UserController {
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
         String refreshToken = refreshTokenProvider.generateToken(tokenInfo);
 
-        log.info("RT: {}", refreshToken);
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(60 * 60 * 24 * 30)
+                .secure(true)
+                .sameSite("None")
+                .build();
 
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         return ResponseEntity.ok().header("Access-Token", accessToken).body(SuccessResponse.noContent());
     }
