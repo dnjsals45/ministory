@@ -82,7 +82,6 @@ public class UserController {
         String refreshToken = refreshTokenProvider.generateToken(tokenInfo);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
-                .domain("localhost")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(60 * 60 * 24)
@@ -107,7 +106,6 @@ public class UserController {
     public ResponseEntity<?> logOut(HttpServletResponse response) {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", "")
-                .domain("localhost")
                 .httpOnly(true)
                 .path("/")
                 .maxAge(0)
