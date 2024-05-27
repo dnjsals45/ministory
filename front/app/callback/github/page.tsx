@@ -18,6 +18,7 @@ const GithubCallback = () => {
         process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/users/auth/github?code=' + authorizationCode,
         {
           method: 'GET',
+          credentials: 'include',
         }
       ).then((response) => {
         const accessToken = response.headers.get('Access-Token')
@@ -28,7 +29,7 @@ const GithubCallback = () => {
     }
 
     fetchData()
-  }, [getUserInfo, router])
+  }, [])
 
   return null
 }
