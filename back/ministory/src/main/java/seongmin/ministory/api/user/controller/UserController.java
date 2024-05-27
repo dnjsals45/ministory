@@ -47,7 +47,7 @@ public class UserController {
         String accessToken = userUtilService.login(user);
 
         return ResponseEntity.noContent()
-                .header("Authorization", "Bearer " + accessToken)
+                .header("Acess-Token", accessToken)
                 .build();
     }
 
@@ -85,7 +85,7 @@ public class UserController {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
                 .httpOnly(true)
-                .path("/")
+                .path("http://localhost:3000")
                 .maxAge(60 * 60 * 24 * 30)
                 .secure(true)
                 .sameSite("None")

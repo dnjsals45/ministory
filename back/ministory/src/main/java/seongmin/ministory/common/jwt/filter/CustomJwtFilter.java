@@ -1,5 +1,6 @@
 package seongmin.ministory.common.jwt.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
+import seongmin.ministory.common.jwt.provider.AccessTokenProvider;
 import seongmin.ministory.common.response.code.AuthErrorCode;
 import seongmin.ministory.common.response.exception.AuthErrorException;
 import seongmin.ministory.common.auth.service.CustomUserDetailsService;
@@ -58,13 +60,16 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         }
 
         log.info("JWT Filter: request: {}", request.getRequestURI());
-        String accessToken = resolveAccessToken(request);
-        String refreshToken = resolveRefreshToken(request);
 
-        if (Boolean.TRUE.equals(accessTokenProvider.isTokenExpire(accessToken))) {
-            if (Boolean.TRUE.equals(refreshTokenProvider.isTokenExpire(refreshToken))) {
-                handleAuthErrorException(AuthErrorCode.NEED_LOGIN, "로그인이 필요합니다.");
-            } else {
+        try {
+            String accessToken = resolveAccessToken(request);
+
+            CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(accessToken);
+            setAuthenticationUser(userDetails, request);
+        } catch (ExpiredJwtException e1) {
+            try {
+                String refreshToken = resolveRefreshToken(request);
+
                 Long userId = refreshTokenProvider.getIdFromToken(refreshToken);
                 User user = userUtilService.findById(userId);
                 String newAccessToken = accessTokenProvider.generateToken(JwtTokenInfo.from(user));
@@ -72,12 +77,12 @@ public class CustomJwtFilter extends OncePerRequestFilter {
                 CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(newAccessToken);
                 setAuthenticationUser(userDetails, request);
                 filterChain.doFilter(request, response);
+
                 return;
+            } catch (ExpiredJwtException e2) {
+                handleAuthErrorException(AuthErrorCode.NEED_LOGIN, "로그인이 필요합니다.");
             }
         }
-
-        CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(accessToken);
-        setAuthenticationUser(userDetails, request);
 
         filterChain.doFilter(request, response);
     }

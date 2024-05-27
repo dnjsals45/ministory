@@ -128,6 +128,8 @@ public class UserService {
     public JwtTokenInfo loginWithGithub(String accessToken) {
         String apiUrl = "https://api.github.com/user";
 
+        log.warn("Here is login service");
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Accept", "application/json");
