@@ -29,6 +29,7 @@ export async function fetchUserInfo(accessToken: string): Promise<{ data: UserIn
   )
   return response.json()
 }
+
 const AuthProvider = ({ children }: Props) => {
   const [accessToken, setAccessToken] = useState<string>('')
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
