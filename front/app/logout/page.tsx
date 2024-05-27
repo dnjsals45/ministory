@@ -9,8 +9,17 @@ export default function LogOut() {
   const { logout } = useContext(AuthContext)
 
   useEffect(() => {
-    logout()
+    const fetchLogout = async () => {
+      await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/users/logout', {
+        method: 'GET',
+        credentials: 'include',
+      }).then(() => {
+        logout()
+      })
+    }
+
+    fetchLogout()
     router.push('/')
-  }, [logout, router])
+  }, [])
   return null
 }
