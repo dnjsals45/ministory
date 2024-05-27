@@ -3,10 +3,10 @@ package seongmin.ministory.api.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,8 +16,6 @@ import seongmin.ministory.api.user.service.UserService;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
-import seongmin.ministory.common.jwt.provider.AccessTokenProvider;
-import seongmin.ministory.common.jwt.provider.RefreshTokenProvider;
 import seongmin.ministory.common.jwt.provider.TokenProvider;
 import seongmin.ministory.common.response.SuccessResponse;
 import seongmin.ministory.common.response.code.AuthErrorCode;
@@ -84,14 +82,15 @@ public class UserController {
         String refreshToken = refreshTokenProvider.generateToken(tokenInfo);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                .domain("localhost")
                 .httpOnly(true)
-                .path("http://localhost:3000")
-                .maxAge(60 * 60 * 24 * 30)
+                .path("/")
+                .maxAge(60 * 60 * 24)
                 .secure(true)
                 .sameSite("None")
                 .build();
 
-        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
         return ResponseEntity.ok().header("Access-Token", accessToken).body(SuccessResponse.noContent());
     }
@@ -101,5 +100,24 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok().body(SuccessResponse.from(userService.getUserInfo(userDetails)));
+    }
+
+    @Operation(summary = "로그아웃", description = "쿠키 무효화")
+    @GetMapping("/logout")
+    public ResponseEntity<?> logOut(HttpServletResponse response) {
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", "")
+                .domain("localhost")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .secure(true)
+                .sameSite("None")
+                .build();
+
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return ResponseEntity.ok().body(SuccessResponse.noContent());
     }
 }
