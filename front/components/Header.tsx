@@ -46,7 +46,7 @@ const Header = () => {
               {link.title}
             </Link>
           ))}
-        {userInfo !== null && <WriteButton />}
+        {userInfo?.role === 'ROLE_ADMIN' && <WriteButton />}
         {userInfo === null ? <LoginButton /> : <LogoutButton />}
         <SearchButton />
         <ThemeSwitch />
