@@ -58,6 +58,7 @@ jwt:
   token:
     access-expiration: 3600000 # 1시간(1000(ms) * 60(m) * 60(h))
     access-header: Authorization
+    refresh-expiration: 86400000 # 1일(1000(ms) * 60(m) * 60(h) * 24(h))
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
@@ -139,7 +140,7 @@ jwt:
   token:
     access-expiration: 3600000 # 1시간(1000(ms) * 60(m) * 60(h))
     access-header: Authorization
-    refresh-expiration: 604800000 # 7일(1000(ms) * 60(m) * 60(h) * 24(h))
+    refresh-expiration: 86400000 # 1일(1000(ms) * 60(m) * 60(h) * 24(h))
 
 springdoc:
   default-consumes-media-type: application/json;charset=UTF-8
