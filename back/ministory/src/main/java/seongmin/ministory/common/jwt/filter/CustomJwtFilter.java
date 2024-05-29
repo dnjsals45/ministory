@@ -17,8 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
+import seongmin.ministory.common.jwt.ForbiddenToken.service.ForbiddenTokenService;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
-import seongmin.ministory.common.jwt.provider.AccessTokenProvider;
 import seongmin.ministory.common.response.code.AuthErrorCode;
 import seongmin.ministory.common.response.exception.AuthErrorException;
 import seongmin.ministory.common.auth.service.CustomUserDetailsService;
@@ -38,6 +38,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
     private final TokenProvider refreshTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
     private final UserUtilService userUtilService;
+    private final ForbiddenTokenService forbiddenTokenService;
 
     private final List<String> jwtIgnoreUrl = List.of(
             "/", "/favicon.ico",
@@ -69,6 +70,10 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e1) {
             try {
                 String refreshToken = resolveRefreshToken(request);
+
+                if (forbiddenTokenService.isExist(refreshToken)) {
+                    handleAuthErrorException(AuthErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 토큰입니다.");
+                }
 
                 Long userId = refreshTokenProvider.getIdFromToken(refreshToken);
                 User user = userUtilService.findById(userId);

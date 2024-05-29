@@ -28,6 +28,7 @@ public enum AuthErrorCode implements StatusCode {
     REFRESH_TOKEN_NOT_FOUND(UNAUTHORIZED, "없거나 삭제된 리프래시 토큰입니다."),
     UNSUPPORTED_JWT_TOKEN(UNAUTHORIZED, "지원하지 않는 토큰입니다"),
     NEED_LOGIN(UNAUTHORIZED, "로그인이 필요합니다."),
+    INVALID_REFRESH_TOKEN(UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 
     /**
      * 500 INTERNAL_SERVER_ERROR

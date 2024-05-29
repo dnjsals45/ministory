@@ -51,6 +51,11 @@ spring:
         auto: false
   cors:
     allowed-origins: ${CORS_ORIGINS}
+  cache:
+    type: redis
+    redis:
+      host: localhost
+      port: 6379
 
 jwt:
   secret:
@@ -132,6 +137,11 @@ spring:
         auto: false
   cors:
     allowed-origins: ${CORS_ORIGINS}
+  cache:
+    type: redis
+    redis:
+      host: localhost
+      port: 6379
 
 jwt:
   secret:

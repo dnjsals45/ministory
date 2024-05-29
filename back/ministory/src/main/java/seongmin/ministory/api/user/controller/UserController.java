@@ -3,6 +3,8 @@ package seongmin.ministory.api.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import seongmin.ministory.api.user.service.UserService;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
+import seongmin.ministory.common.jwt.ForbiddenToken.dto.ForbiddenToken;
+import seongmin.ministory.common.jwt.ForbiddenToken.service.ForbiddenTokenService;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
 import seongmin.ministory.common.jwt.provider.TokenProvider;
 import seongmin.ministory.common.response.SuccessResponse;
@@ -34,6 +38,7 @@ public class UserController {
     private final TokenProvider refreshTokenProvider;
     private final UserService userService;
     private final UserUtilService userUtilService;
+    private final ForbiddenTokenService forbiddenTokenService;
 
     @Operation(summary = "테스트용 로그인", description = "DB에 있는 유저의 id만을 이용해서 로그인해야 가능한 기능 테스트")
     @GetMapping("/{user_id}")
@@ -103,7 +108,20 @@ public class UserController {
 
     @Operation(summary = "로그아웃", description = "쿠키 무효화")
     @GetMapping("/logout")
-    public ResponseEntity<?> logOut(HttpServletResponse response) {
+    public ResponseEntity<?> logOut(HttpServletRequest request, HttpServletResponse response) {
+
+        String forbidden = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Refresh-Token".equals(cookie.getName())) {
+                    forbidden = cookie.getValue();
+                }
+            }
+        }
+
+        forbiddenTokenService.save(forbidden);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", "")
                 .httpOnly(true)
