@@ -3,41 +3,26 @@
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import process from 'process'
+import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { AuthContext } from '@/components/hooks/useAuth'
 
 export default function CommentInput({ contentId, onCommentAdded }) {
-  const [accessToken, setAccessToken] = useState<string>()
+  const { accessToken } = useContext(AuthContext)
   const [comment, setComment] = useState('')
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access-token')
-    if (accessToken != undefined) {
-      setAccessToken(accessToken)
-    }
-  }, [])
 
   const handleCommentSubmit = async () => {
     const data = {
       comment: comment,
     }
 
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }
-
-    if (accessToken) {
-      requestOptions.headers['Authorization'] = 'Bearer ' + accessToken
-    }
-
     try {
-      const response = await fetch(
+      const response = await fetchWithCredentials(
         process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${contentId}/comments`,
-        requestOptions
+        'POST',
+        accessToken,
+        data
       )
 
       if (response.ok) {

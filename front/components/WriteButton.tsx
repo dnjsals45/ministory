@@ -2,52 +2,36 @@
 
 import { useRouter } from 'next/navigation'
 import process from 'process'
-
-interface newPostData {
-  contentId: string
-}
-
-export async function createPost(
-  requestOptions: {
-    method: string
-    headers: { 'Content-Type': string }
-  },
-  router
-): Promise<{ data: newPostData }> {
-  const response = await fetch(
-    process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents',
-    requestOptions
-  )
-
-  if (response.status === 401) {
-    localStorage.removeItem('access-token')
-    router.push('/')
-    alert('로그아웃 처리')
-  }
-
-  return response.json()
-}
+import { useContext } from 'react'
+import { AuthContext } from '@/components/hooks/useAuth'
+import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
 
 export default function WriteButton() {
+  const { accessToken } = useContext(AuthContext)
   const router = useRouter()
+
   const newPost = async () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        credentials: 'include',
-      },
-    }
+    try {
+      const response = await fetchWithCredentials<{ data: { contentId: string } }>(
+        process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents',
+        'POST',
+        accessToken
+      )
 
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access-token')
-      if (token) {
-        requestOptions.headers['Authorization'] = 'Bearer ' + token
+      if (response.ok) {
+        const { contentId } = await response.json().then((data) => data.data)
+        router.push(`/blog/post/${contentId}`)
+      } else if (response.status === 401) {
+        localStorage.removeItem('access-token')
+        router.push('/')
+        alert('로그아웃 처리')
+      } else {
+        alert('새 게시물 생성에 실패했습니다.')
       }
+    } catch (error) {
+      console.error('새 게시물 생성 중 에러 발생:', error)
+      alert('새 게시물 생성 중 에러가 발생했습니다.')
     }
-
-    const response = await createPost(requestOptions, router)
-    router.push(`/blog/post/${response.data.contentId}`)
   }
 
   return (
