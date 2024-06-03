@@ -4,18 +4,14 @@ import { useEffect, useState } from 'react'
 import { CommentItem } from '@/data/CommentItem'
 import { Divider, List, ListItem, ListItemText } from '@mui/material'
 import process from 'process'
+import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
 
 async function fetchComment(id: number): Promise<{ data: CommentItem[] }> {
-  const data = await fetch(
+  const response = await fetchWithoutCredentials(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/comments`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-    }
+    'GET'
   )
-  return data.json()
+  return response.json()
 }
 export default function Comments({ contentId, refreshComments }) {
   const [comments, setComments] = useState<CommentItem[]>([])

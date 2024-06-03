@@ -53,14 +53,14 @@ public class ContentController {
 
     @Operation(summary = "게시글 1개 생성", description = "기본적인 내용만 있는 게시글 생성")
     @PostMapping("")
-    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
+    @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createContent(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.createContent(userDetails)));
     }
 
     @Operation(summary = "게시글 1개 수정", description = "complete가 true면 완성, 아니면 임시저장")
     @PatchMapping("/{content_id}")
-    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
+    @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> modifyContent(@Parameter(name = "content_id", description = "게시글 번호")
                                            @PathVariable(name = "content_id") Long contentId,
                                            @Valid @RequestBody ModifyContentReq req,

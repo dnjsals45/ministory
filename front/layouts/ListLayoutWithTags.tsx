@@ -11,6 +11,7 @@ import { ContentItem } from '@/data/ContentItem'
 import { useContext, useEffect, useState } from 'react'
 import { TagContext } from '@/components/hooks/useTag'
 import process from 'process'
+import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
 
 interface PaginationProps {
   totalPages: number
@@ -63,13 +64,12 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
 export async function fetchContentsData(
   pageNumber: number
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
-  const data = await fetch(
+  const response = await fetchWithoutCredentials(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?page=${pageNumber}`,
-    {
-      method: 'GET',
-    }
+    'GET'
   )
-  return data.json()
+
+  return response.json()
 }
 
 export default function ListLayoutWithTags({ title }: ListLayoutProps) {

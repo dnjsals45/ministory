@@ -1,7 +1,9 @@
 package seongmin.ministory.common.jwt.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +15,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
+import seongmin.ministory.common.jwt.ForbiddenToken.service.ForbiddenTokenService;
+import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
 import seongmin.ministory.common.response.code.AuthErrorCode;
 import seongmin.ministory.common.response.exception.AuthErrorException;
 import seongmin.ministory.common.auth.service.CustomUserDetailsService;
 import seongmin.ministory.common.jwt.provider.TokenProvider;
+import seongmin.ministory.domain.user.entity.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +35,10 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class CustomJwtFilter extends OncePerRequestFilter {
     private final TokenProvider accessTokenProvider;
+    private final TokenProvider refreshTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserUtilService userUtilService;
+    private final ForbiddenTokenService forbiddenTokenService;
 
     private final List<String> jwtIgnoreUrl = List.of(
             "/", "/favicon.ico",
@@ -53,10 +62,32 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
         log.info("JWT Filter: request: {}", request.getRequestURI());
 
-        String accessToken = resolveAccessToken(request, response);
+        try {
+            String accessToken = resolveAccessToken(request);
 
-        CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(accessToken);
-        setAuthenticationUser(userDetails, request);
+            CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(accessToken);
+            setAuthenticationUser(userDetails, request);
+        } catch (ExpiredJwtException e1) {
+            try {
+                String refreshToken = resolveRefreshToken(request);
+
+                if (forbiddenTokenService.isExist(refreshToken)) {
+                    handleAuthErrorException(AuthErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 토큰입니다.");
+                }
+
+                Long userId = refreshTokenProvider.getIdFromToken(refreshToken);
+                User user = userUtilService.findById(userId);
+                String newAccessToken = accessTokenProvider.generateToken(JwtTokenInfo.from(user));
+                response.setHeader("Access-Token", newAccessToken);
+                CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(newAccessToken);
+                setAuthenticationUser(userDetails, request);
+                filterChain.doFilter(request, response);
+
+                return;
+            } catch (ExpiredJwtException e2) {
+                handleAuthErrorException(AuthErrorCode.NEED_LOGIN, "로그인이 필요합니다.");
+            }
+        }
 
         filterChain.doFilter(request, response);
     }
@@ -80,7 +111,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         return judge.isPresent() || "OPTIONS".equals(method);
     }
 
-    private String resolveAccessToken(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    private String resolveAccessToken(HttpServletRequest request) throws ServletException {
         String accessToken = accessTokenProvider.resolveToken(request);
 
         if (!StringUtils.hasText(accessToken)) {
@@ -88,6 +119,19 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         }
 
         return accessToken;
+    }
+
+    private String resolveRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Refresh-Token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     private UserDetails getUserDetails(String accessToken) {

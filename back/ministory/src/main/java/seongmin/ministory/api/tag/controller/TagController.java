@@ -28,7 +28,7 @@ public class TagController {
 
     @Operation(summary = "태그 등록", description = "사용할 태그 등록(Admin만)")
     @PostMapping("/register")
-    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
+    @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> registerTag(@RequestBody RegisterTagReq req,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
         tagService.registerTag(req);

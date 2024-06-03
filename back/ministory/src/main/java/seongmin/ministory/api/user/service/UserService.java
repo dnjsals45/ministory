@@ -81,7 +81,6 @@ public class UserService {
         body.add("redirect_uri", githubRedirectUri);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, httpHeaders);
-//        log.info("Before Get AccessToken");
 
         ResponseEntity<Map> responseEntity = restTemplate.exchange(
                 tokenUrl,
@@ -89,12 +88,11 @@ public class UserService {
                 requestEntity,
                 Map.class
         );
-        log.info("Get Access responseEntity: {}", responseEntity);
 
         Map<String, String> response = responseEntity.getBody();
 
         String accessToken = response.get("access_token");
-        log.info("AccessToken: {}", accessToken);
+
         return accessToken;
     }
 
@@ -138,25 +136,21 @@ public class UserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, httpHeaders);
 
-        log.info("Before Login");
         ResponseEntity<Map> responseEntity = restTemplate.exchange(
                 apiUrl,
                 HttpMethod.GET,
                 requestEntity,
                 Map.class
         );
-        log.info("Login responseEntity: {}", responseEntity);
 
         Map<String, ?> response = responseEntity.getBody();
         String githubId = response.get("id").toString();
 
-        log.info("Github Id: {}", githubId);
         User user = userRepository.findByOauthId(githubId).orElse(null); // orElse 구문에 setNewUser(response)을 넣었더니 왜 중복으로 계속 저장할까?
         if (user == null) { // 일단은 user == null 로 해결
             user = setGithubNewUser(response);
         }
 
-        log.info("User: {}", user.toString());
         return JwtTokenInfo.from(user);
     }
 

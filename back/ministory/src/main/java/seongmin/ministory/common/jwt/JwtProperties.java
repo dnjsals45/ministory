@@ -14,11 +14,13 @@ public class JwtProperties {
     @Data
     public static class Secret {
         private String accessSecretKey;
+        private String refreshSecretKey;
     }
 
     @Data
     public static class Token {
         private Duration accessExpiration;
         private String accessHeader;
+        private Duration refreshExpiration;
     }
 }

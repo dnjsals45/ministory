@@ -19,6 +19,7 @@ interface Props {
 export async function fetchRegisterTagData(): Promise<{ data: { tags: RegisterTag[] } }> {
   const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/tags', {
     method: 'GET',
+    credentials: 'include',
   })
   return data.json()
 }
@@ -26,6 +27,7 @@ export async function fetchRegisterTagData(): Promise<{ data: { tags: RegisterTa
 export async function fetchTagData(): Promise<{ data: { tags: ContentTag[] } }> {
   const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/tags/counts', {
     method: 'GET',
+    credentials: 'include',
   })
   return data.json()
 }

@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { ContentItem } from '@/data/ContentItem'
-import projectsData from '@/data/projectsData'
 import RecentPostCard from '@/components/RecentPostCard'
 import process from 'process'
 
 async function fetchData(): Promise<{ data: { contents: ContentItem[] } }> {
   const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents/recent', {
     method: 'GET',
+    credentials: 'include',
   })
   return data.json()
 }
