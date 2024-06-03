@@ -9,7 +9,7 @@ import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
 import { AuthContext } from '@/components/hooks/useAuth'
 
 export default function CommentInput({ contentId, onCommentAdded }) {
-  const { accessToken } = useContext(AuthContext)
+  const { accessToken, setAccessToken } = useContext(AuthContext)
   const [comment, setComment] = useState('')
 
   const handleCommentSubmit = async () => {
@@ -24,6 +24,11 @@ export default function CommentInput({ contentId, onCommentAdded }) {
         accessToken,
         data
       )
+
+      if (response.headers.has('Access-Token')) {
+        const newAccessToken = response.headers.get('Access-Token')
+        newAccessToken && setAccessToken(newAccessToken)
+      }
 
       if (response.ok) {
         onCommentAdded()

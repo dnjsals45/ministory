@@ -31,7 +31,7 @@ export default function EditContent(props) {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const { accessToken } = useContext(AuthContext)
+  const { accessToken, setAccessToken } = useContext(AuthContext)
   const { tags, fetchContentTag, fetchRegisterTag } = useContext(TagContext)
 
   useEffect(() => {
@@ -59,12 +59,22 @@ export default function EditContent(props) {
       content
     )
 
+    if (contentResponse.headers.has('Access-Token')) {
+      const newAccessToken = contentResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
+
     const tagResponse = await fetchWithCredentials(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
       'POST',
       accessToken,
       { tags: selectedTags }
     )
+
+    if (tagResponse.headers.has('Access-Token')) {
+      const newAccessToken = tagResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
 
     if (contentResponse.ok && tagResponse.ok) {
       alert('게시글 수정 성공!')

@@ -7,7 +7,7 @@ import { AuthContext } from '@/components/hooks/useAuth'
 import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
 
 export default function WriteButton() {
-  const { accessToken } = useContext(AuthContext)
+  const { accessToken, setAccessToken } = useContext(AuthContext)
   const router = useRouter()
 
   const newPost = async () => {
@@ -17,6 +17,11 @@ export default function WriteButton() {
         'POST',
         accessToken
       )
+
+      if (response.headers.has('Access-Token')) {
+        const newAccessToken = response.headers.get('Access-Token')
+        newAccessToken && setAccessToken(newAccessToken)
+      }
 
       if (response.ok) {
         const { contentId } = await response.json().then((data) => data.data)
