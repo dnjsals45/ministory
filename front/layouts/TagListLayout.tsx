@@ -65,13 +65,13 @@ async function fetchTagContentsData(
   pageNumber: number,
   tagName: string
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
-  const data = await fetch(
+  const response = await fetch(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/tags/${tagName}?page=${pageNumber}`,
     {
       method: 'GET',
     }
   )
-  return data.json()
+  return response.json()
 }
 
 export default function ListLayoutWithTags({ title, tagName }: ListLayoutProps) {

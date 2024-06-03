@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { TagContext } from '@/components/hooks/useTag'
 import dynamic from 'next/dynamic'
 import process from 'process'
+import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
 
 const MyEditorWithNoSSR = dynamic(() => import('@/components/MyEditor'), {
   ssr: false,
@@ -18,7 +19,7 @@ export default function NewPost(props) {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const { accessToken } = useContext(AuthContext)
+  const { accessToken, setAccessToken } = useContext(AuthContext)
   const { tags, fetchContentTag, fetchRegisterTag } = useContext(TagContext)
 
   const handleComplete = async () => {
@@ -28,29 +29,29 @@ export default function NewPost(props) {
       complete: true,
     }
 
-    const contentResponse = await fetch(
+    const contentResponse = await fetchWithCredentials(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: 'Bearer ' + accessToken,
-        },
-        body: JSON.stringify(content),
-      }
+      'PATCH',
+      accessToken,
+      content
     )
 
-    const tagResponse = await fetch(
+    if (contentResponse.headers.has('Access-Token')) {
+      const newAccessToken = contentResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
+
+    const tagResponse = await fetchWithCredentials(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: 'Bearer ' + accessToken,
-        },
-        body: JSON.stringify({ tags: selectedTags }),
-      }
+      'POST',
+      accessToken,
+      { tags: selectedTags }
     )
+
+    if (tagResponse.headers.has('Access-Token')) {
+      const newAccessToken = tagResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
 
     if (contentResponse.ok && tagResponse.ok) {
       alert('게시글 작성 성공!')
@@ -70,28 +71,18 @@ export default function NewPost(props) {
       complete: false,
     }
 
-    const contentResponse = await fetch(
+    const contentResponse = await fetchWithCredentials(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: 'Bearer ' + accessToken,
-        },
-        body: JSON.stringify(content),
-      }
+      'PATCH',
+      accessToken,
+      content
     )
 
-    const tagResponse = await fetch(
+    const tagResponse = await fetchWithCredentials(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: 'Bearer ' + accessToken,
-        },
-        body: JSON.stringify({ tags: selectedTags }),
-      }
+      'POST',
+      accessToken,
+      { tags: selectedTags }
     )
 
     if (contentResponse.ok && tagResponse.ok) {

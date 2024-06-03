@@ -2,7 +2,6 @@ package seongmin.ministory.common.jwt.provider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
 
@@ -13,13 +12,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AccessTokenProvider implements TokenProvider {
+public class RefreshTokenProvider implements TokenProvider {
 
     private final SecretKey signature;
     private final Duration tokenExpiration;
 
-    public AccessTokenProvider(String accessSecret, Duration tokenExpiration) {
-        final byte[] secretKeyBytes = Base64.getDecoder().decode(accessSecret);
+    public RefreshTokenProvider(String refreshSecret, Duration tokenExpiration) {
+        final byte[] secretKeyBytes = Base64.getDecoder().decode(refreshSecret);
         this.signature = Keys.hmacShaKeyFor(secretKeyBytes);
         this.tokenExpiration = tokenExpiration;
     }
@@ -32,11 +31,12 @@ public class AccessTokenProvider implements TokenProvider {
                 .header()
                 .add(createHeader())
                 .and()
-                .claims(createClaims("MiniStory-access", tokenInfo))
+                .claims(createClaims("MiniStory-refresh", tokenInfo))
                 .expiration(createExpiration(now, tokenExpiration.toMillis()))
                 .issuedAt(now)
                 .signWith(signature)
                 .compact();
+
     }
 
     @Override
@@ -44,14 +44,14 @@ public class AccessTokenProvider implements TokenProvider {
         Map<String, Object> headers = new HashMap<>();
 
         headers.put("typ", "JWT");
-        headers.put("alg", "HS256"); // SignatureAlgorithm Deprecate 으로 인해 변경
+        headers.put("alg", "HS256");
         headers.put("regDate", System.currentTimeMillis());
 
         return headers;
     }
 
     @Override
-    public Date createExpiration(final Date now, long duration) {
+    public Date createExpiration(Date now, long duration) {
         return new Date(now.getTime() + duration);
     }
 
@@ -84,6 +84,4 @@ public class AccessTokenProvider implements TokenProvider {
     public Long getIdFromToken(String token) {
         return extractClaim(token).get("id", Long.class);
     }
-
-
 }

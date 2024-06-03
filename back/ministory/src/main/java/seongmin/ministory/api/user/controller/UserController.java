@@ -3,9 +3,13 @@ package seongmin.ministory.api.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import seongmin.ministory.api.user.service.UserService;
 import seongmin.ministory.api.user.service.UserUtilService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
+import seongmin.ministory.common.jwt.ForbiddenToken.dto.ForbiddenToken;
+import seongmin.ministory.common.jwt.ForbiddenToken.service.ForbiddenTokenService;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
 import seongmin.ministory.common.jwt.provider.TokenProvider;
 import seongmin.ministory.common.response.SuccessResponse;
@@ -29,8 +35,10 @@ import java.io.IOException;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final TokenProvider accessTokenProvider;
+    private final TokenProvider refreshTokenProvider;
     private final UserService userService;
     private final UserUtilService userUtilService;
+    private final ForbiddenTokenService forbiddenTokenService;
 
     @Operation(summary = "테스트용 로그인", description = "DB에 있는 유저의 id만을 이용해서 로그인해야 가능한 기능 테스트")
     @GetMapping("/{user_id}")
@@ -42,7 +50,7 @@ public class UserController {
         String accessToken = userUtilService.login(user);
 
         return ResponseEntity.noContent()
-                .header("Authorization", "Bearer " + accessToken)
+                .header("Acess-Token", accessToken)
                 .build();
     }
 
@@ -60,7 +68,8 @@ public class UserController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> login(@Parameter(name = "provider", description = "google, github")
                                    @PathVariable(name = "provider") String provider,
-                                   @RequestParam("code") String authorizationCode) {
+                                   @RequestParam("code") String authorizationCode,
+                                   HttpServletResponse response) {
         String authorizationToken;
         log.info("Login with {}", provider);
         switch (provider) {
@@ -75,8 +84,17 @@ public class UserController {
             default -> throw new AuthErrorException(AuthErrorCode.UNKNOWN_PROVIDER, "존재하지 않는 프로바이더 입니다.");
         }
         String accessToken = accessTokenProvider.generateToken(tokenInfo);
-        log.info("AT: {}", accessToken);
+        String refreshToken = refreshTokenProvider.generateToken(tokenInfo);
 
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", refreshToken)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(60 * 60 * 24)
+                .secure(true)
+                .sameSite("None")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
         return ResponseEntity.ok().header("Access-Token", accessToken).body(SuccessResponse.noContent());
     }
@@ -86,5 +104,36 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok().body(SuccessResponse.from(userService.getUserInfo(userDetails)));
+    }
+
+    @Operation(summary = "로그아웃", description = "쿠키 무효화")
+    @GetMapping("/logout")
+    public ResponseEntity<?> logOut(HttpServletRequest request, HttpServletResponse response) {
+
+        String forbidden = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Refresh-Token".equals(cookie.getName())) {
+                    forbidden = cookie.getValue();
+                }
+            }
+        }
+
+        forbiddenTokenService.save(forbidden);
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .secure(true)
+                .sameSite("None")
+                .build();
+
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return ResponseEntity.ok().body(SuccessResponse.noContent());
     }
 }
