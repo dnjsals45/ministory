@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from 'react'
 import { TagContext } from '@/components/hooks/useTag'
 import process from 'process'
 import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
+import { SearchContext } from '@/components/hooks/useSearch'
 
 interface PaginationProps {
   totalPages: number
@@ -62,10 +63,30 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
 }
 
 export async function fetchContentsData(
-  pageNumber: number
+  pageNumber: number,
+  tag?: string,
+  keyword?: string
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
+  const queryParams = new URLSearchParams()
+
+  queryParams.append('page', pageNumber.toString())
+
+  if (keyword) {
+    queryParams.append('keyword', keyword.toString())
+    const response = await fetchWithoutCredentials(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?${queryParams.toString()}`,
+      'GET'
+    )
+
+    return response.json()
+  }
+
+  if (tag) {
+    queryParams.append('tag', tag.toString())
+  }
+
   const response = await fetchWithoutCredentials(
-    process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?page=${pageNumber}`,
+    process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?${queryParams.toString()}`,
     'GET'
   )
 
@@ -77,11 +98,13 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
   const pageNumber = params !== null ? parseInt(params) : 1
   const [contents, setContents] = useState<ContentItem[]>([])
   const [pagination, setPagination] = useState<PaginationProps | null>(null)
+  const [tag, setTag] = useState<string>()
+  const { keyword, setKeyword } = useContext(SearchContext)
   const { contentTags } = useContext(TagContext)
 
   useEffect(() => {
     const fetchContents = async () => {
-      const contentsData = await fetchContentsData(pageNumber)
+      const contentsData = await fetchContentsData(pageNumber, tag)
       setContents(contentsData.data.contents)
       setPagination({
         currentPage: pageNumber,
@@ -90,7 +113,11 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
     }
 
     fetchContents()
-  }, [pageNumber])
+  }, [pageNumber, tag, keyword])
+
+  const handleTagClick = (tagName: string) => {
+    setTag(tagName)
+  }
 
   return (
     <>
@@ -107,14 +134,22 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
               <ul>
                 {contentTags?.map((t) => {
                   return (
+                    // <li key={t.tagName} className="my-3">
+                    //   <Link
+                    //     href={`/blog/tag/${slug(t.tagName)}`}
+                    //     className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                    //     aria-label={`View posts tagged ${t.tagName}`}
+                    //   >
+                    //     {`${t.tagName} (${t.count})`}
+                    //   </Link>
+                    // </li>
                     <li key={t.tagName} className="my-3">
-                      <Link
-                        href={`/blog/tag/${slug(t.tagName)}`}
+                      <button
+                        onClick={() => handleTagClick(t.tagName)}
                         className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
-                        aria-label={`View posts tagged ${t.tagName}`}
                       >
                         {`${t.tagName} (${t.count})`}
-                      </Link>
+                      </button>
                     </li>
                   )
                 })}
