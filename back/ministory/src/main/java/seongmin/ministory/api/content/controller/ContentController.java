@@ -38,9 +38,11 @@ public class ContentController {
     @Operation(summary = "게시글 페이지 조회(페이징 기능)", description = "페이지 번호에 맞게 가져오기")
     @GetMapping("")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<?> getContentsPage(@RequestParam(name = "page") Long pageNum) {
+    public ResponseEntity<?> getContentsPage(@RequestParam(name = "page") Long pageNum,
+                                             @RequestParam(name = "tag", required = false) String tag,
+                                             @RequestParam(name = "keyword", required = false) String keyword) {
         pageNum = pageNum == null ? 1 : pageNum;
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage(pageNum)));
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage(pageNum, tag, keyword)));
     }
 
     @Operation(summary = "게시글 1개 조회", description = "content_id가 일치하는 게시글 1개 조회")
@@ -100,5 +102,14 @@ public class ContentController {
         File uploadedFile = new File(filepath);
 
         return Files.readAllBytes(uploadedFile.toPath());
+    }
+
+    @Operation(summary = "게시글 검색", description = "제목과 내용을 검색")
+    @GetMapping("/search")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> searchContent(@RequestParam(name = "keyword") String keyword,
+                                           @RequestParam(name = "page") Long pageNum) {
+        pageNum = pageNum == null ? 1 : pageNum;
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.searchContent(keyword, pageNum)));
     }
 }

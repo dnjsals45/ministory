@@ -11,6 +11,7 @@ import seongmin.ministory.domain.content.entity.QContent;
 import seongmin.ministory.domain.tag.entity.QContentTag;
 import seongmin.ministory.domain.tag.entity.QTag;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -122,6 +123,62 @@ public class QContentRepositoryImpl implements QContentRepository {
                         .and(content.complete.isTrue())
                         .and(content.deletedAt.isNull()))
                 .fetchOne();
+
+        if (totalCount == null) {
+            totalCount = 0L;
+        }
+
+        return new PageImpl<>(contents, pageable, totalCount);
+    }
+
+    @Override
+    public Page<Content> searchContent(String keyword, Pageable pageable) {
+        List<Long> contentIds = new ArrayList<>();
+
+        List<Long> titleSearch = jpaQueryFactory
+                .select(content.id)
+                .from(content)
+                .where(content.title.contains(keyword)
+                        .and(content.complete.isTrue())
+                        .and(content.deletedAt.isNull()))
+                .orderBy(content.createdAt.desc())
+                .fetch();
+
+        List<Long> contentSearch = jpaQueryFactory
+                .select(content.id)
+                .from(content)
+                .where(content.body.contains(keyword)
+                        .and(content.complete.isTrue())
+                        .and(content.deletedAt.isNull()))
+                .orderBy(content.createdAt.desc())
+                .fetch();
+
+        for (Long id : titleSearch) {
+            if (!contentIds.contains(id)) {
+                contentIds.add(id);
+            }
+        }
+
+        for (Long id : contentSearch) {
+            if (!contentIds.contains(id)) {
+                contentIds.add(id);
+            }
+        }
+
+        if (contentIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+
+        List<Content> contents = jpaQueryFactory
+                .selectFrom(content)
+                .leftJoin(content.contentTags, contentTag).fetchJoin()
+                .where(content.id.in(contentIds))
+                .orderBy(content.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long totalCount = (long) contentIds.size();
 
         if (totalCount == null) {
             totalCount = 0L;

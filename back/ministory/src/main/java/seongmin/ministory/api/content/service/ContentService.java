@@ -78,11 +78,31 @@ public class ContentService {
     }
 
     @Transactional(readOnly = true)
-    public AllContentsRes getContentsPage(Long pageNum) {
-        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5));
+    public AllContentsRes getContentsPage(Long pageNum, String tag, String keyword) {
+        Page<Content> contentsPage;
+
+        if (tag != null && keyword != null) {
+            throw new ContentErrorException(ContentErrorCode.INVALID_REQUEST);
+        }
+
+        if (tag != null) {
+            contentsPage = contentUtilService.findTagContents(tag, PageRequest.of(pageNum.intValue() - 1, 5));
+        } else if (keyword != null) {
+            contentsPage = contentUtilService.searchContent(keyword, PageRequest.of(pageNum.intValue() - 1, 5));
+        } else {
+            contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5));
+        }
+
         List<Content> contents = contentsPage.getContent();
 
         return AllContentsRes.from(contents, contentsPage.getTotalPages());
+    }
+
+    public AllContentsRes searchContent(String keyword, Long pageNum) {
+        Page<Content> contentPage = contentUtilService.searchContent(keyword, PageRequest.of(pageNum.intValue() - 1, 5));
+        List<Content> contents = contentPage.getContent();
+
+        return AllContentsRes.from(contents, contentPage.getTotalPages());
     }
 
     @Transactional(readOnly = true)

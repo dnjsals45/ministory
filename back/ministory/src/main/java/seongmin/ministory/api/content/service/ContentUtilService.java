@@ -2,6 +2,7 @@ package seongmin.ministory.api.content.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import seongmin.ministory.common.response.code.ContentErrorCode;
@@ -41,5 +42,9 @@ public class ContentUtilService {
 
     public Page<Content> findTagContents(String tagName, Pageable pageable) {
         return contentRepository.findTagContents(tagName, pageable);
+    }
+
+    public Page<Content> searchContent(String keyword, Pageable pageable) {
+        return contentRepository.searchContent(keyword, pageable);
     }
 }
