@@ -1,13 +1,14 @@
-import React, { useContext, useState } from 'react'
+'use client'
+
+import React, { useContext, useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
-import { SearchContext } from '@/components/hooks/useSearch'
+import { useRouter } from 'next/navigation'
 
 const SearchModal = ({ isVisible, onClose }) => {
-  const { keyword, setKeyword } = useContext(SearchContext)
-  const [searchQuery, setSearchQuery] = useState(keyword || '')
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState('')
 
   const handleSearch = () => {
-    setKeyword(searchQuery)
     onClose()
   }
 

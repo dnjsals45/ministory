@@ -12,6 +12,9 @@ import { useContext } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
 import LogoutButton from '@/components/LogoutButton'
 import LoginButton from '@/components/LoginButton'
+import { TagContext } from '@/components/hooks/useTag'
+import { router } from 'next/client'
+import { useRouter } from 'next/navigation'
 
 const Header = () => {
   const { userInfo } = useContext(AuthContext)

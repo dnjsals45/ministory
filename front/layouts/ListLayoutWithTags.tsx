@@ -2,7 +2,6 @@
 'use client'
 
 import { usePathname, useSearchParams } from 'next/navigation'
-import { slug } from 'github-slugger'
 import { formatDate } from 'pliny/utils/formatDate'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
@@ -119,6 +118,10 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
     setTag(tagName)
   }
 
+  const handleAllPost = () => {
+    setTag(undefined)
+  }
+
   return (
     <>
       <div>
@@ -130,23 +133,20 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
         <div className="flex sm:space-x-24">
           <div className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded bg-gray-50 pt-5 shadow-md dark:bg-gray-900/70 dark:shadow-gray-800/40 sm:flex">
             <div className="px-6 py-4">
-              <h3 className="font-bold uppercase text-primary-500">Category</h3>
+              <h3 className="pb-2 font-bold uppercase text-primary-500">Category</h3>
               <ul>
-                {contentTags?.map((t) => {
+                <button
+                  onClick={handleAllPost}
+                  className="text-m px-3 pt-2 font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                >
+                  전체 ({contentTags?.total})
+                </button>
+                {contentTags?.tags.map((t) => {
                   return (
-                    // <li key={t.tagName} className="my-3">
-                    //   <Link
-                    //     href={`/blog/tag/${slug(t.tagName)}`}
-                    //     className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
-                    //     aria-label={`View posts tagged ${t.tagName}`}
-                    //   >
-                    //     {`${t.tagName} (${t.count})`}
-                    //   </Link>
-                    // </li>
                     <li key={t.tagName} className="my-3">
                       <button
                         onClick={() => handleTagClick(t.tagName)}
-                        className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                        className="px-3 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
                       >
                         {`${t.tagName} (${t.count})`}
                       </button>
@@ -183,7 +183,13 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
                           </h2>
                           <div className="flex flex-wrap">
                             {content.tags?.map((tag) => (
-                              <Tag key={tag.tagName} text={tag.tagName} />
+                              <button
+                                key={tag.tagName}
+                                className="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                                onClick={() => handleTagClick(tag.tagName)}
+                              >
+                                #{tag.tagName.split(' ').join('-')}
+                              </button>
                             ))}
                           </div>
                         </div>
