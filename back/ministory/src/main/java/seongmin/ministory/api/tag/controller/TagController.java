@@ -35,7 +35,7 @@ public class TagController {
         return ResponseEntity.ok().body(SuccessResponse.noContent());
     }
 
-    @Operation(summary = "게시글에 등록되어 있는 태그별 개수 반환", description = "태그별 개수 반환하는 로직")
+    @Operation(summary = "게시글에 등록되어 있는 태그별 개수와 전체 개수 반환", description = "태그별 개수 반환하는 로직")
     @GetMapping("/counts")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> countTags() {

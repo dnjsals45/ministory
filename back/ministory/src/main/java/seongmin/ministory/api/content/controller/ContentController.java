@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 @Tag(name = "게시글 API", description = "게시글 관련 API")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/v1/contents")
 public class ContentController {
     private final ContentService contentService;
@@ -41,6 +43,7 @@ public class ContentController {
     public ResponseEntity<?> getContentsPage(@RequestParam(name = "page") Long pageNum,
                                              @RequestParam(name = "tag", required = false) String tag,
                                              @RequestParam(name = "keyword", required = false) String keyword) {
+        log.info("pageNum: {}, tag: {}, keyword: {}", pageNum, tag, keyword);
         pageNum = pageNum == null ? 1 : pageNum;
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage(pageNum, tag, keyword)));
     }

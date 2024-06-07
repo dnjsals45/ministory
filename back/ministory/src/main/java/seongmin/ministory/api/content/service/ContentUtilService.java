@@ -47,4 +47,8 @@ public class ContentUtilService {
     public Page<Content> searchContent(String keyword, Pageable pageable) {
         return contentRepository.searchContent(keyword, pageable);
     }
+
+    public Long countAllContents() {
+        return contentRepository.countAllByCompleteIsTrue();
+    }
 }
