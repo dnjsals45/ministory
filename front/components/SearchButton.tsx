@@ -3,12 +3,25 @@
 import React, { useContext, useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import { useRouter } from 'next/navigation'
+import { SearchContext } from '@/components/hooks/useSearch'
 
 const SearchModal = ({ isVisible, onClose }) => {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
+  const { keyword, setKeyword } = useContext(SearchContext)
+
+  useEffect(() => {
+    router.push('/blog')
+  }, [keyword])
+
+  useEffect(() => {
+    if (isVisible) {
+      setSearchQuery('')
+    }
+  }, [isVisible])
 
   const handleSearch = () => {
+    setKeyword(searchQuery)
     onClose()
   }
 

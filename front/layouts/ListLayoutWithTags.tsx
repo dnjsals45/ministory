@@ -103,7 +103,7 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
 
   useEffect(() => {
     const fetchContents = async () => {
-      const contentsData = await fetchContentsData(pageNumber, tag)
+      const contentsData = await fetchContentsData(pageNumber, tag, keyword)
       setContents(contentsData.data.contents)
       setPagination({
         currentPage: pageNumber,
