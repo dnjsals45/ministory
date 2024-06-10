@@ -133,56 +133,26 @@ public class QContentRepositoryImpl implements QContentRepository {
 
     @Override
     public Page<Content> searchContent(String keyword, Pageable pageable) {
-        List<Long> contentIds = new ArrayList<>();
-
-        List<Long> titleSearch = jpaQueryFactory
+        List<Long> searchData = jpaQueryFactory
                 .select(content.id)
                 .from(content)
                 .where(content.title.contains(keyword)
+                        .or(content.body.contains(keyword))
                         .and(content.complete.isTrue())
                         .and(content.deletedAt.isNull()))
-                .orderBy(content.createdAt.desc())
-                .fetch();
-
-        List<Long> contentSearch = jpaQueryFactory
-                .select(content.id)
-                .from(content)
-                .where(content.body.contains(keyword)
-                        .and(content.complete.isTrue())
-                        .and(content.deletedAt.isNull()))
-                .orderBy(content.createdAt.desc())
-                .fetch();
-
-        for (Long id : titleSearch) {
-            if (!contentIds.contains(id)) {
-                contentIds.add(id);
-            }
-        }
-
-        for (Long id : contentSearch) {
-            if (!contentIds.contains(id)) {
-                contentIds.add(id);
-            }
-        }
-
-        if (contentIds.isEmpty()) {
-            return Page.empty(pageable);
-        }
-
-        List<Content> contents = jpaQueryFactory
-                .selectFrom(content)
-                .leftJoin(content.contentTags, contentTag).fetchJoin()
-                .where(content.id.in(contentIds))
                 .orderBy(content.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long totalCount = (long) contentIds.size();
+        List<Content> contents = jpaQueryFactory
+                .selectFrom(content)
+                .leftJoin(content.contentTags, contentTag).fetchJoin()
+                .where(content.id.in(searchData))
+                .orderBy(content.createdAt.desc())
+                .fetch();
 
-        if (totalCount == null) {
-            totalCount = 0L;
-        }
+        Long totalCount = (long) searchData.size();
 
         return new PageImpl<>(contents, pageable, totalCount);
     }
