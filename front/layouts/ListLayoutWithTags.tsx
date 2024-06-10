@@ -98,8 +98,8 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
   const [contents, setContents] = useState<ContentItem[]>([])
   const [pagination, setPagination] = useState<PaginationProps | null>(null)
   const [tag, setTag] = useState<string>()
-  const { keyword, setKeyword } = useContext(SearchContext)
   const { contentTags } = useContext(TagContext)
+  const { keyword } = useContext(SearchContext)
 
   useEffect(() => {
     const fetchContents = async () => {
