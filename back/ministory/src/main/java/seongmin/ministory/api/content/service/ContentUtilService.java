@@ -44,8 +44,8 @@ public class ContentUtilService {
         return contentRepository.findTagContents(tagName, pageable);
     }
 
-    public Page<Content> searchContent(String keyword, Pageable pageable) {
-        return contentRepository.searchContent(keyword, pageable);
+    public Page<Content> searchContent(Pageable pageable, String tagName, String keyword) {
+        return contentRepository.searchContent(pageable, tagName, keyword);
     }
 
     public Long countAllContents() {

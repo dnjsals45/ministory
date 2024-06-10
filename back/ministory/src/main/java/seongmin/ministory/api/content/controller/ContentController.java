@@ -106,13 +106,4 @@ public class ContentController {
 
         return Files.readAllBytes(uploadedFile.toPath());
     }
-
-    @Operation(summary = "게시글 검색", description = "제목과 내용을 검색")
-    @GetMapping("/search")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> searchContent(@RequestParam(name = "keyword") String keyword,
-                                           @RequestParam(name = "page") Long pageNum) {
-        pageNum = pageNum == null ? 1 : pageNum;
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.searchContent(keyword, pageNum)));
-    }
 }
