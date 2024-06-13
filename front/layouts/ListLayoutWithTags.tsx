@@ -72,12 +72,6 @@ export async function fetchContentsData(
 
   if (keyword) {
     queryParams.append('keyword', keyword.toString())
-    const response = await fetchWithoutCredentials(
-      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?${queryParams.toString()}`,
-      'GET'
-    )
-
-    return response.json()
   }
 
   if (tag) {
@@ -97,13 +91,12 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
   const pageNumber = params !== null ? parseInt(params) : 1
   const [contents, setContents] = useState<ContentItem[]>([])
   const [pagination, setPagination] = useState<PaginationProps | null>(null)
-  const [tag, setTag] = useState<string>()
   const { contentTags } = useContext(TagContext)
-  const { keyword } = useContext(SearchContext)
+  const { keyword, nowTag, setKeyword, setNowTag } = useContext(SearchContext)
 
   useEffect(() => {
     const fetchContents = async () => {
-      const contentsData = await fetchContentsData(pageNumber, tag, keyword)
+      const contentsData = await fetchContentsData(pageNumber, nowTag, keyword)
       setContents(contentsData.data.contents)
       setPagination({
         currentPage: pageNumber,
@@ -112,14 +105,16 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
     }
 
     fetchContents()
-  }, [pageNumber, tag, keyword])
+  }, [pageNumber, nowTag, keyword])
 
   const handleTagClick = (tagName: string) => {
-    setTag(tagName)
+    setNowTag(tagName)
+    setKeyword(undefined)
   }
 
   const handleAllPost = () => {
-    setTag(undefined)
+    setNowTag(undefined)
+    setKeyword(undefined)
   }
 
   return (

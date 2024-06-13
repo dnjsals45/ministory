@@ -31,9 +31,17 @@ const SearchModal = ({ isVisible, onClose }) => {
   if (!isVisible) return null
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50"
       onClick={handleBackgroundClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          handleClose()
+        }
+      }}
+      tabIndex={0}
+      role={'dialog'}
     >
       <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
         <button
@@ -52,6 +60,7 @@ const SearchModal = ({ isVisible, onClose }) => {
             className="flex-grow rounded-l-lg border border-gray-300 p-2 focus:outline-none"
           />
           <button
+            type={'button'}
             onClick={handleSearch}
             className="rounded-r-lg bg-blue-500 p-2 text-white hover:bg-blue-700"
           >

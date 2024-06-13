@@ -4,12 +4,16 @@ import { createContext, ReactNode, useState } from 'react'
 
 interface SearchContextType {
   keyword: string | undefined
+  nowTag: string | undefined
   setKeyword: React.Dispatch<React.SetStateAction<string | undefined>>
+  setNowTag: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
 const SearchContext = createContext<SearchContextType>({
   keyword: undefined,
+  nowTag: undefined,
   setKeyword: () => {},
+  setNowTag: () => {},
 })
 
 interface Props {
@@ -18,8 +22,13 @@ interface Props {
 
 const SearchProvider = ({ children }: Props) => {
   const [keyword, setKeyword] = useState<string>()
+  const [nowTag, setNowTag] = useState<string>()
 
-  return <SearchContext.Provider value={{ keyword, setKeyword }}>{children}</SearchContext.Provider>
+  return (
+    <SearchContext.Provider value={{ keyword, nowTag, setKeyword, setNowTag }}>
+      {children}
+    </SearchContext.Provider>
+  )
 }
 
 export { SearchProvider, SearchContext }

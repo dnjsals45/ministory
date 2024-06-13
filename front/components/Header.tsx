@@ -18,11 +18,12 @@ import { useRouter } from 'next/navigation'
 import { SearchContext } from '@/components/hooks/useSearch'
 
 const Header = () => {
-  const { setKeyword } = useContext(SearchContext)
+  const { setKeyword, setNowTag } = useContext(SearchContext)
   const { userInfo } = useContext(AuthContext)
 
   const handleBlogButton = () => {
     setKeyword(undefined)
+    setNowTag(undefined)
   }
 
   return (
