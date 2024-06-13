@@ -32,10 +32,6 @@ public class ContentUtilService {
         return contentRepository.existsByIdAndUserId(contentId, userId);
     }
 
-    public Page<Content> findContentPages(Pageable pageable) {
-        return contentRepository.findContentsPage(pageable);
-    }
-
     public List<Content> findRecentContentsWithTags() {
         return contentRepository.findRecentContentsWithTags();
     }
