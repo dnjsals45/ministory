@@ -12,9 +12,19 @@ import { useContext } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
 import LogoutButton from '@/components/LogoutButton'
 import LoginButton from '@/components/LoginButton'
+import { TagContext } from '@/components/hooks/useTag'
+import { router } from 'next/client'
+import { useRouter } from 'next/navigation'
+import { SearchContext } from '@/components/hooks/useSearch'
 
 const Header = () => {
+  const { setKeyword, setNowTag } = useContext(SearchContext)
   const { userInfo } = useContext(AuthContext)
+
+  const handleBlogButton = () => {
+    setKeyword(undefined)
+    setNowTag(undefined)
+  }
 
   return (
     <header className="flex items-center justify-between py-10">
@@ -41,6 +51,7 @@ const Header = () => {
             <Link
               key={link.title}
               href={link.href}
+              onClick={link.title === 'Blog' ? handleBlogButton : undefined}
               className="hidden font-medium text-gray-900 dark:text-gray-100 sm:block"
             >
               {link.title}

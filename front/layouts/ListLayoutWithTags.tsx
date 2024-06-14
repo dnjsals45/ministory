@@ -2,7 +2,6 @@
 'use client'
 
 import { usePathname, useSearchParams } from 'next/navigation'
-import { slug } from 'github-slugger'
 import { formatDate } from 'pliny/utils/formatDate'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
@@ -12,6 +11,7 @@ import { useContext, useEffect, useState } from 'react'
 import { TagContext } from '@/components/hooks/useTag'
 import process from 'process'
 import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
+import { SearchContext } from '@/components/hooks/useSearch'
 
 interface PaginationProps {
   totalPages: number
@@ -62,10 +62,24 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
 }
 
 export async function fetchContentsData(
-  pageNumber: number
+  pageNumber: number,
+  tag?: string,
+  keyword?: string
 ): Promise<{ data: { contents: ContentItem[]; totalPage: number } }> {
+  const queryParams = new URLSearchParams()
+
+  queryParams.append('page', pageNumber.toString())
+
+  if (keyword) {
+    queryParams.append('keyword', keyword.toString())
+  }
+
+  if (tag) {
+    queryParams.append('tag', tag.toString())
+  }
+
   const response = await fetchWithoutCredentials(
-    process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?page=${pageNumber}`,
+    process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?${queryParams.toString()}`,
     'GET'
   )
 
@@ -78,10 +92,11 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
   const [contents, setContents] = useState<ContentItem[]>([])
   const [pagination, setPagination] = useState<PaginationProps | null>(null)
   const { contentTags } = useContext(TagContext)
+  const { keyword, nowTag, setKeyword, setNowTag } = useContext(SearchContext)
 
   useEffect(() => {
     const fetchContents = async () => {
-      const contentsData = await fetchContentsData(pageNumber)
+      const contentsData = await fetchContentsData(pageNumber, nowTag, keyword)
       setContents(contentsData.data.contents)
       setPagination({
         currentPage: pageNumber,
@@ -90,7 +105,17 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
     }
 
     fetchContents()
-  }, [pageNumber])
+  }, [pageNumber, nowTag, keyword])
+
+  const handleTagClick = (tagName: string) => {
+    setNowTag(tagName)
+    setKeyword(undefined)
+  }
+
+  const handleAllPost = () => {
+    setNowTag(undefined)
+    setKeyword(undefined)
+  }
 
   return (
     <>
@@ -103,18 +128,23 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
         <div className="flex sm:space-x-24">
           <div className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded bg-gray-50 pt-5 shadow-md dark:bg-gray-900/70 dark:shadow-gray-800/40 sm:flex">
             <div className="px-6 py-4">
-              <h3 className="font-bold uppercase text-primary-500">Category</h3>
+              <h3 className="pb-2 font-bold uppercase text-primary-500">Category</h3>
               <ul>
-                {contentTags?.map((t) => {
+                <button
+                  onClick={handleAllPost}
+                  className="text-m px-3 pt-2 font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                >
+                  전체 ({contentTags?.total})
+                </button>
+                {contentTags?.tags.map((t) => {
                   return (
                     <li key={t.tagName} className="my-3">
-                      <Link
-                        href={`/blog/tag/${slug(t.tagName)}`}
-                        className="px-3 py-2 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
-                        aria-label={`View posts tagged ${t.tagName}`}
+                      <button
+                        onClick={() => handleTagClick(t.tagName)}
+                        className="px-3 text-sm font-medium uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
                       >
                         {`${t.tagName} (${t.count})`}
-                      </Link>
+                      </button>
                     </li>
                   )
                 })}
@@ -148,7 +178,13 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
                           </h2>
                           <div className="flex flex-wrap">
                             {content.tags?.map((tag) => (
-                              <Tag key={tag.tagName} text={tag.tagName} />
+                              <button
+                                key={tag.tagName}
+                                className="mr-3 text-sm font-medium uppercase text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                                onClick={() => handleTagClick(tag.tagName)}
+                              >
+                                #{tag.tagName.split(' ').join('-')}
+                              </button>
                             ))}
                           </div>
                         </div>

@@ -36,7 +36,7 @@ export default function Content(props) {
   }, [id])
 
   const handleCommentAdded = () => {
-    setRefreshComments((prev) => !prev) // 댓글 목록 새로고침 상태를 토글하여 Comments 컴포넌트에서 새로운 목록을 불러오도록 합니다.
+    setRefreshComments((prev) => !prev)
   }
 
   return (
