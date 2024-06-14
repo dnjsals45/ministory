@@ -43,7 +43,6 @@ public class ContentController {
     public ResponseEntity<?> getContentsPage(@RequestParam(name = "page") Long pageNum,
                                              @RequestParam(name = "tag", required = false) String tag,
                                              @RequestParam(name = "keyword", required = false) String keyword) {
-        log.info("pageNum: {}, tag: {}, keyword: {}", pageNum, tag, keyword);
         pageNum = pageNum == null ? 1 : pageNum;
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContentsPage(pageNum, tag, keyword)));
     }
