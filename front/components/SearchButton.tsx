@@ -1,34 +1,92 @@
-import { AlgoliaButton } from 'pliny/search/AlgoliaButton'
-import { KBarButton } from 'pliny/search/KBarButton'
-import siteMetadata from '@/data/siteMetadata'
+'use client'
+
+import React, { useContext, useState } from 'react'
+import SearchIcon from '@mui/icons-material/Search'
+import { useRouter } from 'next/navigation'
+import { SearchContext } from '@/components/hooks/useSearch'
+
+const SearchModal = ({ isVisible, onClose }) => {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState('')
+  const { setKeyword } = useContext(SearchContext)
+
+  const handleSearch = () => {
+    setKeyword(searchQuery)
+    setSearchQuery('')
+    router.push('/blog')
+    onClose()
+  }
+
+  const handleClose = () => {
+    setSearchQuery('')
+    onClose()
+  }
+
+  const handleBackgroundClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose()
+    }
+  }
+
+  if (!isVisible) return null
+
+  return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50"
+      onClick={handleBackgroundClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          handleClose()
+        }
+      }}
+      tabIndex={0}
+      role={'dialog'}
+    >
+      <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+        <button
+          className="absolute right-2 top-2 text-gray-600 hover:text-gray-900"
+          onClick={handleClose}
+        >
+          ×
+        </button>
+        <h1 className="mb-4 text-2xl">검색</h1>
+        <div className="flex">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="검색어를 입력해주세요."
+            className="flex-grow rounded-l-lg border border-gray-300 p-2 focus:outline-none"
+          />
+          <button
+            type={'button'}
+            onClick={handleSearch}
+            className="rounded-r-lg bg-blue-500 p-2 text-white hover:bg-blue-700"
+          >
+            검색
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const SearchButton = () => {
-  if (
-    siteMetadata.search &&
-    (siteMetadata.search.provider === 'algolia' || siteMetadata.search.provider === 'kbar')
-  ) {
-    const SearchButtonWrapper =
-      siteMetadata.search.provider === 'algolia' ? AlgoliaButton : KBarButton
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
-    return (
-      <SearchButtonWrapper aria-label="Search">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="h-6 w-6 text-gray-900 dark:text-gray-100"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-          />
-        </svg>
-      </SearchButtonWrapper>
-    )
+  const handleToggleModal = () => {
+    setIsModalVisible(!isModalVisible)
   }
+
+  return (
+    <div>
+      <button onClick={handleToggleModal} className="text-gray-600 hover:text-gray-900">
+        <SearchIcon />
+      </button>
+      <SearchModal isVisible={isModalVisible} onClose={handleToggleModal} />
+    </div>
+  )
 }
 
 export default SearchButton

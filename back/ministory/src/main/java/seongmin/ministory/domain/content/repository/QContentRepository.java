@@ -13,4 +13,6 @@ public interface QContentRepository {
     List<Content> findRecentContentsWithTags();
 
     Page<Content> findTagContents(String tagName, Pageable pageable);
+
+    Page<Content> searchContent(Pageable pageable, String tagName, String keyword);
 }

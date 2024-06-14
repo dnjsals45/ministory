@@ -1,13 +1,13 @@
 'use client'
 
 import { createContext, ReactNode, useEffect, useState } from 'react'
-import { ContentTag } from '@/data/ContentTag'
+import { ContentTags } from '@/data/ContentTag'
 import process from 'process'
 import { RegisterTag } from '@/data/RegisterTag'
 
 const TagContext = createContext({
   tags: null as RegisterTag[] | null,
-  contentTags: null as ContentTag[] | null,
+  contentTags: null as ContentTags | null,
   fetchContentTag: async () => {},
   fetchRegisterTag: async () => {},
 })
@@ -24,7 +24,7 @@ export async function fetchRegisterTagData(): Promise<{ data: { tags: RegisterTa
   return data.json()
 }
 
-export async function fetchTagData(): Promise<{ data: { tags: ContentTag[] } }> {
+export async function fetchTagData(): Promise<{ data: ContentTags }> {
   const data = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/tags/counts', {
     method: 'GET',
     credentials: 'include',
@@ -33,7 +33,7 @@ export async function fetchTagData(): Promise<{ data: { tags: ContentTag[] } }> 
 }
 
 const TagProvider = ({ children }: Props) => {
-  const [contentTags, setContentTags] = useState<ContentTag[]>([])
+  const [contentTags, setContentTags] = useState<ContentTags | null>(null)
   const [tags, setTags] = useState<RegisterTag[]>([])
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const TagProvider = ({ children }: Props) => {
 
   const fetchContentTag = async () => {
     const response = await fetchTagData()
-    setContentTags(response.data.tags)
+    setContentTags(response.data)
   }
 
   const fetchRegisterTag = async () => {

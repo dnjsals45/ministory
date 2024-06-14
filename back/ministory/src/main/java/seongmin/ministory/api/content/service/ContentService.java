@@ -78,8 +78,11 @@ public class ContentService {
     }
 
     @Transactional(readOnly = true)
-    public AllContentsRes getContentsPage(Long pageNum) {
-        Page<Content> contentsPage = contentUtilService.findContentPages(PageRequest.of(pageNum.intValue() - 1,  5));
+    public AllContentsRes getContentsPage(Long pageNum, String tag, String keyword) {
+        Page<Content> contentsPage;
+
+        contentsPage = contentUtilService.searchContent(PageRequest.of(pageNum.intValue() - 1, 5), tag, keyword);
+
         List<Content> contents = contentsPage.getContent();
 
         return AllContentsRes.from(contents, contentsPage.getTotalPages());
