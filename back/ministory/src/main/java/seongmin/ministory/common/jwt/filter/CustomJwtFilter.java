@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,8 +28,12 @@ import seongmin.ministory.common.jwt.provider.TokenProvider;
 import seongmin.ministory.domain.user.entity.User;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -48,6 +54,8 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        setViewerId(request, response);
+
         if (ignoreTokenRequest(request)) {
             log.info("JWT Filter: Ignoring request: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
@@ -69,7 +77,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
             setAuthenticationUser(userDetails, request);
         } catch (ExpiredJwtException e1) {
             try {
-                String refreshToken = resolveRefreshToken(request);
+                String refreshToken = resolveCookie(request, "Refresh-Token");
 
                 if (forbiddenTokenService.isExist(refreshToken)) {
                     handleAuthErrorException(AuthErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 토큰입니다.");
@@ -90,6 +98,36 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void setViewerId(HttpServletRequest request, HttpServletResponse response) {
+        String viewerId = resolveCookie(request, "Viewer-Id");
+
+        if (!StringUtils.hasText(viewerId)) {
+            viewerId = generateNewViewerId();
+
+            ResponseCookie viewerIdCookie = ResponseCookie.from("Viewer-Id", viewerId)
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(getUntilTomorrow())
+                    .secure(true)
+                    .sameSite("None")
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, viewerIdCookie.toString());
+        }
+
+        request.setAttribute("viewerId", viewerId);
+    }
+
+    private static long getUntilTomorrow() {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        LocalDateTime tomorrow = now.plusDays(1).truncatedTo(ChronoUnit.DAYS);
+        return ChronoUnit.SECONDS.between(now, tomorrow);
+    }
+
+    private String generateNewViewerId() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     private boolean isAnonymousRequest(HttpServletRequest request) {
@@ -121,12 +159,12 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         return accessToken;
     }
 
-    private String resolveRefreshToken(HttpServletRequest request) {
+    private String resolveCookie(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("Refresh-Token".equals(cookie.getName())) {
+                if (cookieName.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }

@@ -9,8 +9,8 @@ export async function fetchWithCredentials<T>(
     headers: {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + accessToken,
-      credentials: 'include',
     },
+    credentials: 'include',
   }
 
   if (body !== undefined) {
@@ -26,6 +26,7 @@ export async function fetchWithoutCredentials<T>(url: string, method: string, bo
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   }
 
   if (body !== undefined) {

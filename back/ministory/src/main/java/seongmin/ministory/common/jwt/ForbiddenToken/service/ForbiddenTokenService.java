@@ -19,7 +19,7 @@ public class ForbiddenTokenService {
     public void save(String refreshToken) {
         ForbiddenToken forbiddenToken = ForbiddenToken.builder()
                 .token(refreshToken)
-                .ttl(60L)
+                .ttl(expiration / 1000)
                 .build();
         forbiddenTokenRepository.save(forbiddenToken);
     }
