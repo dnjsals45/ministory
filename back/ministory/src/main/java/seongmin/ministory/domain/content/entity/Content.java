@@ -33,7 +33,8 @@ public class Content extends Auditing {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "body", length = 2000)
+    @Lob // varchar(2)가 아닌 MEDIUMTEXT 형식으로 저장
+    @Column(name = "body")
     private String body;
 
     @Column(name = "complete", nullable = false)
