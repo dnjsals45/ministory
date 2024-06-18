@@ -1,4 +1,4 @@
-export async function fetchWithCredentials<T>(
+export async function fetchWithAuthorization<T>(
   url: string,
   method: string,
   accessToken: string,
@@ -20,7 +20,7 @@ export async function fetchWithCredentials<T>(
   return await fetch(url, requestOptions)
 }
 
-export async function fetchWithoutCredentials<T>(url: string, method: string, body?: T) {
+export async function fetchWithoutAuthorization<T>(url: string, method: string, body?: T) {
   const requestOptions: RequestInit = {
     method: method,
     headers: {

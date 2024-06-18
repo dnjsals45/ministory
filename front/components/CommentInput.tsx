@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { useContext, useEffect, useState } from 'react'
 import process from 'process'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 import { AuthContext } from '@/components/hooks/useAuth'
 
 export default function CommentInput({ contentId, onCommentAdded }) {
@@ -18,7 +18,7 @@ export default function CommentInput({ contentId, onCommentAdded }) {
     }
 
     try {
-      const response = await fetchWithCredentials(
+      const response = await fetchWithAuthorization(
         process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${contentId}/comments`,
         'POST',
         accessToken,

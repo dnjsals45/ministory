@@ -10,7 +10,7 @@ import { ContentItem } from '@/data/ContentItem'
 import { useContext, useEffect, useState } from 'react'
 import { TagContext } from '@/components/hooks/useTag'
 import process from 'process'
-import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithoutAuthorization } from '@/components/hooks/CustomFetch'
 import { SearchContext } from '@/components/hooks/useSearch'
 
 interface PaginationProps {
@@ -78,7 +78,7 @@ export async function fetchContentsData(
     queryParams.append('tag', tag.toString())
   }
 
-  const response = await fetchWithoutCredentials(
+  const response = await fetchWithoutAuthorization(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?${queryParams.toString()}`,
     'GET'
   )

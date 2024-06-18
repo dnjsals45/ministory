@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { TagContext } from '@/components/hooks/useTag'
 import dynamic from 'next/dynamic'
 import process from 'process'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 const MyEditorWithNoSSR = dynamic(() => import('@/components/MyEditor'), {
   ssr: false,
@@ -29,7 +29,7 @@ export default function NewPost(props) {
       complete: true,
     }
 
-    const contentResponse = await fetchWithCredentials(
+    const contentResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
       'PATCH',
       accessToken,
@@ -41,7 +41,7 @@ export default function NewPost(props) {
       newAccessToken && setAccessToken(newAccessToken)
     }
 
-    const tagResponse = await fetchWithCredentials(
+    const tagResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
       'POST',
       accessToken,
@@ -71,14 +71,14 @@ export default function NewPost(props) {
       complete: false,
     }
 
-    const contentResponse = await fetchWithCredentials(
+    const contentResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
       'PATCH',
       accessToken,
       content
     )
 
-    const tagResponse = await fetchWithCredentials(
+    const tagResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
       'POST',
       accessToken,

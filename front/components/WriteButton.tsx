@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import process from 'process'
 import { useContext } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 export default function WriteButton() {
   const { accessToken, setAccessToken } = useContext(AuthContext)
@@ -12,7 +12,7 @@ export default function WriteButton() {
 
   const newPost = async () => {
     try {
-      const response = await fetchWithCredentials<{ data: { contentId: string } }>(
+      const response = await fetchWithAuthorization<{ data: { contentId: string } }>(
         process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents',
         'POST',
         accessToken

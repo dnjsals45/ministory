@@ -8,7 +8,7 @@ import { TagContext } from '@/components/hooks/useTag'
 import { ContentDetail } from '@/data/ContentDetail'
 import process from 'process'
 import { useRouter } from 'next/navigation'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 const MyEditorWithNoSSR = dynamic(() => import('@/components/MyEditor'), {
   ssr: false,
@@ -52,7 +52,7 @@ export default function EditContent(props) {
       complete: true,
     }
 
-    const contentResponse = await fetchWithCredentials(
+    const contentResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
       'PATCH',
       accessToken,
@@ -64,7 +64,7 @@ export default function EditContent(props) {
       newAccessToken && setAccessToken(newAccessToken)
     }
 
-    const tagResponse = await fetchWithCredentials(
+    const tagResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
       'POST',
       accessToken,
