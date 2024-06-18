@@ -7,9 +7,6 @@ import seongmin.ministory.domain.content.entity.Content;
 import java.util.List;
 
 public interface QContentRepository {
-
-    Page<Content> findContentsPage(Pageable pageable);
-
     List<Content> findRecentContentsWithTags();
 
     Page<Content> findTagContents(String tagName, Pageable pageable);
