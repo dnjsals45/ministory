@@ -3,6 +3,7 @@ package seongmin.ministory.api.content.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,9 @@ public class ContentController {
     @GetMapping("/{content_id}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getContent(@Parameter(name = "content_id", description = "게시글 번호")
-                                        @PathVariable(name = "content_id") Long contentId) {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(contentId)));
+                                        @PathVariable(name = "content_id") Long contentId,
+                                        HttpServletRequest request) {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(contentId, (String) request.getAttribute("viewerId"))));
     }
 
     @Operation(summary = "게시글 1개 생성", description = "기본적인 내용만 있는 게시글 생성")
