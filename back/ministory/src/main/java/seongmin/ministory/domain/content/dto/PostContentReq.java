@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Schema(description = "게시글 수정 요청 DTO")
-public class ModifyContentReq {
+public class PostContentReq {
     @NotBlank
     @Schema(description = "게시글 제목", example = "제목")
     private String title;

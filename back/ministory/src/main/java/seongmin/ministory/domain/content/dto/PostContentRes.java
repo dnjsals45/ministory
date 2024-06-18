@@ -7,11 +7,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class ModifyContentRes {
+public class PostContentRes {
     private Long contentId;
     private LocalDateTime updatedAt;
 
-    public static ModifyContentRes of(Long contentId, LocalDateTime updatedAt) {
-        return new ModifyContentRes(contentId, updatedAt);
+    public static PostContentRes of(Long contentId, LocalDateTime updatedAt) {
+        return new PostContentRes(contentId, updatedAt);
     }
 }

@@ -3,7 +3,6 @@ package seongmin.ministory.api.content.service;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -50,13 +49,13 @@ public class ContentService {
         return GetContentRes.from(content);
     }
 
-    public CreateContentRes createContent(CustomUserDetails userDetails) {
+    public CreateContentRes createContent(CustomUserDetails userDetails, PostContentReq req) {
         User user = userUtilService.findById(userDetails.getUserId());
 
         Content newContent = Content.builder()
                 .user(user)
-                .title("")
-                .body("")
+                .title(req.getTitle())
+                .body(req.getBody())
                 .complete(false)
                 .views(0L)
                 .build();
@@ -68,12 +67,12 @@ public class ContentService {
                 .build();
     }
 
-    public ModifyContentRes modifyContent(Long contentId, ModifyContentReq req) {
+    public PostContentRes modifyContent(Long contentId, PostContentReq req) {
         Content content = contentUtilService.findById(contentId);
 
         contentUtilService.save(content.update(req.getTitle(), req.getBody(), req.getComplete()));
 
-        return ModifyContentRes.of(content.getId(), content.getUpdatedAt());
+        return PostContentRes.of(content.getId(), content.getUpdatedAt());
     }
 
     public void deleteContent(Long contentId) {

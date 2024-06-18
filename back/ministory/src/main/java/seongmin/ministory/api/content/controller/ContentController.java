@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import seongmin.ministory.api.content.service.ContentService;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
 import seongmin.ministory.common.response.SuccessResponse;
-import seongmin.ministory.domain.content.dto.ModifyContentReq;
+import seongmin.ministory.domain.content.dto.PostContentReq;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,11 +57,12 @@ public class ContentController {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(contentId, (String) request.getAttribute("viewerId"))));
     }
 
-    @Operation(summary = "게시글 1개 생성", description = "기본적인 내용만 있는 게시글 생성")
+    @Operation(summary = "게시글 1개 생성", description = "프론트에서 자동 임시저장으로 날아오는 내용을 기반으로 게시글 생성")
     @PostMapping("")
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> createContent(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.createContent(userDetails)));
+    public ResponseEntity<?> createContent(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                           @Valid @RequestBody PostContentReq req) {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.createContent(userDetails, req)));
     }
 
     @Operation(summary = "게시글 1개 수정", description = "complete가 true면 완성, 아니면 임시저장")
@@ -69,7 +70,7 @@ public class ContentController {
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> modifyContent(@Parameter(name = "content_id", description = "게시글 번호")
                                            @PathVariable(name = "content_id") Long contentId,
-                                           @Valid @RequestBody ModifyContentReq req,
+                                           @Valid @RequestBody PostContentReq req,
                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.modifyContent(contentId, req)));
     }
