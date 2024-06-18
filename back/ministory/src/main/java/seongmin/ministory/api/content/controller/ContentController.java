@@ -30,7 +30,7 @@ import java.nio.file.Files;
 public class ContentController {
     private final ContentService contentService;
 
-
+    // GET
     @Operation(summary = "최근 게시물 9개 조회", description = "9개까지만 보여주기")
     @GetMapping("/recent")
     @PreAuthorize("permitAll()")
@@ -57,6 +57,31 @@ public class ContentController {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(contentId, (String) request.getAttribute("viewerId"))));
     }
 
+    @Operation(summary = "임시저장된 게시글 조회", description = "임시저장된 게시글들을 List형태로 반환")
+    @GetMapping("/temp")
+    @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getTempContents() {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getTempContents()));
+    }
+
+    @Operation(summary = "태그가 달려있는 게시물만 반환", description = "spring일 경우 spring태그가 있는 게시물만 반환")
+    @GetMapping("/tags/{tag_name}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> getTagContents(@PathVariable(name = "tag_name") String tagName,
+                                            @RequestParam(name = "page") Long pageNum) {
+        pageNum = pageNum == null ? 1 : pageNum;
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getTagContents(tagName, pageNum)));
+    }
+
+    @Operation(summary = "게시글 이미지 렌더링", description = "프론트 callback 함수에서 들어와 렌더링된 이미지 데이터를 가져가게 됨")
+    @GetMapping(value = "/image-print", produces = {MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
+    public byte[] printEditorImage(@RequestParam String filepath) throws IOException {
+        File uploadedFile = new File(filepath);
+
+        return Files.readAllBytes(uploadedFile.toPath());
+    }
+
+    // POST
     @Operation(summary = "게시글 1개 생성", description = "프론트에서 자동 임시저장으로 날아오는 내용을 기반으로 게시글 생성")
     @PostMapping("")
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
@@ -65,6 +90,15 @@ public class ContentController {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.createContent(userDetails, req)));
     }
 
+    @Operation(summary = "게시글 이미지 업로드", description = "게시글에 추가되는 이미지를 업로드")
+    @PostMapping("/image-upload")
+    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
+    public ResponseEntity<?> uploadImage(@RequestParam MultipartFile image) throws IOException {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.uploadImage(image)));
+    }
+
+
+    // PATCH
     @Operation(summary = "게시글 1개 수정", description = "complete가 true면 완성, 아니면 임시저장")
     @PatchMapping("/{content_id}")
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
@@ -75,6 +109,8 @@ public class ContentController {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.modifyContent(contentId, req)));
     }
 
+
+    // DELETE
     @Operation(summary = "게시글 1개 삭제", description = "soft delete로 복구할 수 있도록 설정")
     @DeleteMapping("/{content_id}")
     @PreAuthorize("isAuthenticated() && @authManager.isContentAuthor(#contentId, authentication.getPrincipal())")
@@ -82,30 +118,5 @@ public class ContentController {
                                            @PathVariable(name = "content_id") Long contentId) {
         contentService.deleteContent(contentId);
         return ResponseEntity.ok().body(SuccessResponse.noContent());
-    }
-
-    @Operation(summary = "태그가 달려있는 게시물만 반환", description = "spring일 경우 spring태그가 있는 게시물만 반환")
-    @GetMapping("/tags/{tag_name}")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> getTagContents(@PathVariable(name = "tag_name") String tagName,
-                                             @RequestParam(name = "page") Long pageNum) {
-        pageNum = pageNum == null ? 1 : pageNum;
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getTagContents(tagName, pageNum)));
-    }
-
-    @Operation(summary = "게시글 이미지 업로드", description = "게시글에 추가되는 이미지를 업로드")
-    @PostMapping("/image-upload")
-//    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> uploadImage(@RequestParam MultipartFile image) throws IOException {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.uploadImage(image)));
-    }
-
-    @Operation(summary = "게시글 이미지 렌더링", description = "프론트 callback 함수에서 들어와 렌더링된 이미지 데이터를 가져가게 됨")
-    @GetMapping(value = "/image-print", produces = {MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
-    public byte[] printEditorImage(@RequestParam String filepath) throws IOException {
-        File uploadedFile = new File(filepath);
-
-        return Files.readAllBytes(uploadedFile.toPath());
     }
 }

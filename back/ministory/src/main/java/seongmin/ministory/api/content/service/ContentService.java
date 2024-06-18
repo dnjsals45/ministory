@@ -5,6 +5,7 @@ import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,6 @@ public class ContentService {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
 
-
     @Transactional
     public GetContentRes getContent(Long contentId, String viewerId) {
         Content content = contentUtilService.findById(contentId);
@@ -67,7 +67,12 @@ public class ContentService {
                 .build();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "tempContents", allEntries = true),
+            @CacheEvict(value = "recentContents", condition = "#req.getComplete == true", allEntries = true)
+    })
     public PostContentRes modifyContent(Long contentId, PostContentReq req) {
+
         Content content = contentUtilService.findById(contentId);
 
         contentUtilService.save(content.update(req.getTitle(), req.getBody(), req.getComplete()));
@@ -94,6 +99,7 @@ public class ContentService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "recentContents")
     public RecentContentsRes getRecentContents() {
         List<Content> contents = contentUtilService.findRecentContentsWithTags();
 
@@ -108,6 +114,12 @@ public class ContentService {
         List<Content> contents = contentsPage.getContent();
 
         return AllContentsRes.from(contents, contentsPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "tempContents")
+    public FindTempContentsRes getTempContents() {
+        return FindTempContentsRes.from(contentUtilService.findTempContents());
     }
 
     public UploadImageRes uploadImage(MultipartFile image) throws IOException {

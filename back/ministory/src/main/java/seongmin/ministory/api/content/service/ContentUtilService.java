@@ -47,4 +47,8 @@ public class ContentUtilService {
     public Long countAllContents() {
         return contentRepository.countAllByCompleteIsTrue();
     }
+
+    public List<Content> findTempContents() {
+        return contentRepository.findAllByCompleteIsFalseAndDeletedAtIsNull();
+    }
 }
