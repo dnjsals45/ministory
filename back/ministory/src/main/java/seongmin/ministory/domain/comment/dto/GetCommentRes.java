@@ -1,17 +1,16 @@
 package seongmin.ministory.domain.comment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import seongmin.ministory.domain.comment.entity.Comment;
 import seongmin.ministory.domain.user.entity.User;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "댓글 조회 응답 DTO")
 public class GetCommentRes {
     private ResComment comment;

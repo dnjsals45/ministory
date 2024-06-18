@@ -1,8 +1,6 @@
 package seongmin.ministory.domain.content.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import seongmin.ministory.domain.content.entity.Content;
 import seongmin.ministory.domain.tag.dto.ContentTagDto;
 import seongmin.ministory.domain.tag.entity.ContentTag;
@@ -12,15 +10,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Getter
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetContentRes {
     private ResContent content;
     private ResUser user;
+    @Builder
     @Getter
     @AllArgsConstructor
-    @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ResContent {
         private Long contentId;
         private String title;
@@ -74,9 +74,10 @@ public class GetContentRes {
         }
     }
 
+    @Builder
     @Getter
     @AllArgsConstructor
-    @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ResUser {
         private String nickname;
 

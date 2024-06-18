@@ -1,8 +1,6 @@
 package seongmin.ministory.domain.content.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -13,9 +11,11 @@ import seongmin.ministory.domain.content.entity.Content;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AllContentsRes {
     private List<GetContentRes> contents;
     private int totalPage;
