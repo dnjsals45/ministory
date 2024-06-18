@@ -8,5 +8,7 @@ import java.util.List;
 public interface ContentRepository extends JpaRepository<Content, Long>, QContentRepository {
     boolean existsByIdAndUserId(Long contentId, Long userId);
 
+    List<Content> findAllByCompleteIsFalseAndDeletedAtIsNull();
+
     Long countAllByCompleteIsTrue();
 }
