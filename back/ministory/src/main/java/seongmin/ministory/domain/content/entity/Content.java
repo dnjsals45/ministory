@@ -9,6 +9,7 @@ import seongmin.ministory.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "CONTENT")
@@ -29,6 +30,9 @@ public class Content extends Auditing {
     @Builder.Default
     @OneToMany(mappedBy = "content")
     private List<ContentTag> contentTags = new ArrayList<>();
+
+    @Column(name = "uuid", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    private UUID uuid;
 
     @Column(name = "title", nullable = false)
     private String title;
