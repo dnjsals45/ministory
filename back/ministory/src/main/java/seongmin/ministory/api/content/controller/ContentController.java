@@ -21,6 +21,7 @@ import seongmin.ministory.domain.content.dto.PostContentReq;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 
 @Tag(name = "게시글 API", description = "게시글 관련 API")
 @RestController
@@ -49,12 +50,12 @@ public class ContentController {
     }
 
     @Operation(summary = "게시글 1개 조회", description = "content_id가 일치하는 게시글 1개 조회")
-    @GetMapping("/{content_id}")
+    @GetMapping("/{content_uuid}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<?> getContent(@Parameter(name = "content_id", description = "게시글 번호")
-                                        @PathVariable(name = "content_id") Long contentId,
+                                        @PathVariable(name = "content_uuid") String uuid,
                                         HttpServletRequest request) {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(contentId, (String) request.getAttribute("viewerId"))));
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(uuid, (String) request.getAttribute("viewerId"))));
     }
 
     @Operation(summary = "임시저장된 게시글 조회", description = "임시저장된 게시글들을 List형태로 반환")
@@ -82,7 +83,7 @@ public class ContentController {
     }
 
     // POST
-    @Operation(summary = "게시글 1개 생성", description = "프론트에서 자동 임시저장으로 날아오는 내용을 기반으로 게시글 생성")
+    @Operation(summary = "게시글 1개 생성", description = "프론트에서 날아오는 정보를 바탕으로 게시글 생성")
     @PostMapping("")
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createContent(@AuthenticationPrincipal CustomUserDetails userDetails,
@@ -100,13 +101,13 @@ public class ContentController {
 
     // PATCH
     @Operation(summary = "게시글 1개 수정", description = "complete가 true면 완성, 아니면 임시저장")
-    @PatchMapping("/{content_id}")
+    @PatchMapping("/{content_uuid}")
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> modifyContent(@Parameter(name = "content_id", description = "게시글 번호")
-                                           @PathVariable(name = "content_id") Long contentId,
+                                           @PathVariable(name = "content_uuid") String uuid,
                                            @Valid @RequestBody PostContentReq req,
                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentService.modifyContent(contentId, req)));
+        return ResponseEntity.ok().body(SuccessResponse.from(contentService.modifyContent(uuid, req)));
     }
 
 

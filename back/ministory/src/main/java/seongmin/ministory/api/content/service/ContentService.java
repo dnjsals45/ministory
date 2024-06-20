@@ -38,12 +38,12 @@ public class ContentService {
     private String bucket;
 
     @Transactional
-    public GetContentRes getContent(Long contentId, String viewerId) {
-        Content content = contentUtilService.findById(contentId);
+    public GetContentRes getContent(String uuid, String viewerId) {
+        Content content = contentUtilService.findByUUID(uuid);
 
-        if (!viewerTrackService.isExist(viewerId, contentId)) {
+        if (!viewerTrackService.isExist(viewerId, content.getId())) {
             content.plusViewCount();
-            viewerTrackService.save(viewerId, contentId);
+            viewerTrackService.save(viewerId, content.getId());
         }
 
         return GetContentRes.from(content);
@@ -54,9 +54,10 @@ public class ContentService {
 
         Content newContent = Content.builder()
                 .user(user)
+                .uuid(UUID.randomUUID())
                 .title(req.getTitle())
                 .body(req.getBody())
-                .complete(false)
+                .complete(req.getComplete())
                 .views(0L)
                 .build();
 
@@ -64,6 +65,7 @@ public class ContentService {
 
         return CreateContentRes.builder()
                 .contentId(newContent.getId())
+                .uuid(newContent.getUuid().toString())
                 .build();
     }
 
@@ -71,13 +73,13 @@ public class ContentService {
             @CacheEvict(value = "tempContents", allEntries = true),
             @CacheEvict(value = "recentContents", condition = "#req.getComplete == true", allEntries = true)
     })
-    public PostContentRes modifyContent(Long contentId, PostContentReq req) {
+    public PostContentRes modifyContent(String uuid, PostContentReq req) {
 
-        Content content = contentUtilService.findById(contentId);
+        Content content = contentUtilService.findByUUID(uuid);
 
         contentUtilService.save(content.update(req.getTitle(), req.getBody(), req.getComplete()));
 
-        return PostContentRes.of(content.getId(), content.getUpdatedAt());
+        return PostContentRes.of(content.getId(), content.getUuid().toString(), content.getUpdatedAt());
     }
 
     public void deleteContent(Long contentId) {

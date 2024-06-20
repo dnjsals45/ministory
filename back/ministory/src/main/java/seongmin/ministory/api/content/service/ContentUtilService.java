@@ -11,6 +11,7 @@ import seongmin.ministory.domain.content.entity.Content;
 import seongmin.ministory.domain.content.repository.ContentRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,11 @@ public class ContentUtilService {
 
     public Content findById(Long contentId) {
         return contentRepository.findById(contentId)
+                .orElseThrow(() -> new ContentErrorException(ContentErrorCode.INVALID_CONTENT_ID));
+    }
+
+    public Content findByUUID(String uuid) {
+        return contentRepository.findByUuid(UUID.fromString(uuid))
                 .orElseThrow(() -> new ContentErrorException(ContentErrorCode.INVALID_CONTENT_ID));
     }
 
