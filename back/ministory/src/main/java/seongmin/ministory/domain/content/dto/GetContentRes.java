@@ -23,6 +23,7 @@ public class GetContentRes {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class ResContent {
         private Long contentId;
+        private String uuid;
         private String title;
         private String body;
         private Boolean complete;
@@ -40,6 +41,7 @@ public class GetContentRes {
 
             return ResContent.builder()
                     .contentId(content.getId())
+                    .uuid(content.getUuid().toString())
                     .title(content.getTitle())
                     .body(content.getBody())
                     .complete(content.getComplete())
@@ -64,6 +66,7 @@ public class GetContentRes {
 
             return ResContent.builder()
                     .contentId(content.getId())
+                    .uuid(content.getUuid().toString())
                     .title(content.getTitle())
                     .body(limited)
                     .complete(content.getComplete())
