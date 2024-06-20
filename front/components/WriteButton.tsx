@@ -7,42 +7,46 @@ import { AuthContext } from '@/components/hooks/useAuth'
 import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 export default function WriteButton() {
-  const { accessToken, setAccessToken } = useContext(AuthContext)
+  // const { accessToken, setAccessToken } = useContext(AuthContext)
   const router = useRouter()
 
-  const newPost = async () => {
-    try {
-      const response = await fetchWithAuthorization<{ data: { contentId: string } }>(
-        process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents',
-        'POST',
-        accessToken
-      )
+  // const newPost = async () => {
+  //   try {
+  //     const response = await fetchWithAuthorization<{ data: { contentId: string } }>(
+  //       process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/contents',
+  //       'POST',
+  //       accessToken
+  //     )
+  //
+  //     if (response.headers.has('Access-Token')) {
+  //       const newAccessToken = response.headers.get('Access-Token')
+  //       newAccessToken && setAccessToken(newAccessToken)
+  //     }
+  //
+  //     if (response.ok) {
+  //       const { contentId } = await response.json().then((data) => data.data)
+  //       router.push(`/blog/post/${contentId}`)
+  //     } else if (response.status === 401) {
+  //       localStorage.removeItem('access-token')
+  //       router.push('/')
+  //       alert('로그아웃 처리')
+  //     } else {
+  //       alert('새 게시물 생성에 실패했습니다.')
+  //     }
+  //   } catch (error) {
+  //     console.error('새 게시물 생성 중 에러 발생:', error)
+  //     alert('새 게시물 생성 중 에러가 발생했습니다.')
+  //   }
+  // }
 
-      if (response.headers.has('Access-Token')) {
-        const newAccessToken = response.headers.get('Access-Token')
-        newAccessToken && setAccessToken(newAccessToken)
-      }
-
-      if (response.ok) {
-        const { contentId } = await response.json().then((data) => data.data)
-        router.push(`/blog/post/${contentId}`)
-      } else if (response.status === 401) {
-        localStorage.removeItem('access-token')
-        router.push('/')
-        alert('로그아웃 처리')
-      } else {
-        alert('새 게시물 생성에 실패했습니다.')
-      }
-    } catch (error) {
-      console.error('새 게시물 생성 중 에러 발생:', error)
-      alert('새 게시물 생성 중 에러가 발생했습니다.')
-    }
+  const goNewPost = () => {
+    router.push('/blog/post')
   }
 
   return (
     <button
       key={'글쓰기'}
-      onClick={newPost}
+      onClick={goNewPost}
       className="hidden font-medium text-gray-900 dark:text-gray-100 sm:block"
     >
       글쓰기

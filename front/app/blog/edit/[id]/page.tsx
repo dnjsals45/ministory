@@ -65,7 +65,7 @@ export default function EditContent(props) {
     }
 
     const tagResponse = await fetchWithAuthorization(
-      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${detail?.content.contentId}/tags`,
       'POST',
       accessToken,
       { tags: selectedTags }
@@ -83,6 +83,44 @@ export default function EditContent(props) {
       router.push('/blog')
     } else {
       alert('게시글 수정 실패....')
+    }
+  }
+
+  const handelEditTemp = async () => {
+    const content = {
+      title: title,
+      body: body,
+      complete: false,
+    }
+
+    const contentResponse = await fetchWithAuthorization(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
+      'PATCH',
+      accessToken,
+      content
+    )
+
+    if (contentResponse.headers.has('Access-Token')) {
+      const newAccessToken = contentResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
+
+    const tagResponse = await fetchWithAuthorization(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${detail?.content.contentId}/tags`,
+      'POST',
+      accessToken,
+      { tags: selectedTags }
+    )
+
+    if (tagResponse.headers.has('Access-Token')) {
+      const newAccessToken = tagResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
+
+    if (contentResponse.ok && tagResponse.ok) {
+      alert('게시글 임시저장 성공!')
+    } else {
+      alert('게시글 임시저장 실패....')
     }
   }
 
@@ -147,6 +185,7 @@ export default function EditContent(props) {
             <MyEditorWithNoSSR onChangeContent={handleBodyChange} initialValue={body} />
           </div>
           <Button onClick={handleEditComplete}>수정하기</Button>
+          <Button onClick={handelEditTemp}>임시저장</Button>
         </div>
       }
     </div>
