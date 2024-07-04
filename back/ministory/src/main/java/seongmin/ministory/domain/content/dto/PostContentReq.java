@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @AllArgsConstructor
 @Getter
@@ -22,4 +24,7 @@ public class PostContentReq {
     @NotNull
     @Schema(description = "작성 완료 여부", example = "false")
     private Boolean complete;
+
+    @Schema(description = "태그 목록")
+    private List<String> tags;
 }

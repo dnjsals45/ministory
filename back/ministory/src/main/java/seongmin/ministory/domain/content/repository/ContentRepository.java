@@ -15,4 +15,6 @@ public interface ContentRepository extends JpaRepository<Content, Long>, QConten
     Long countAllByCompleteIsTrue();
 
     Optional<Content> findByUuid(UUID uuid);
+
+    boolean existsByUuidAndUserId(UUID uuid, Long userId);
 }

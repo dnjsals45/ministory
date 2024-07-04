@@ -52,7 +52,7 @@ public class ContentController {
     @Operation(summary = "게시글 1개 조회", description = "content_id가 일치하는 게시글 1개 조회")
     @GetMapping("/{content_uuid}")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<?> getContent(@Parameter(name = "content_id", description = "게시글 번호")
+    public ResponseEntity<?> getContent(@Parameter(name = "content_uuid", description = "게시글 uuid")
                                         @PathVariable(name = "content_uuid") String uuid,
                                         HttpServletRequest request) {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.getContent(uuid, (String) request.getAttribute("viewerId"))));
@@ -103,7 +103,7 @@ public class ContentController {
     @Operation(summary = "게시글 1개 수정", description = "complete가 true면 완성, 아니면 임시저장")
     @PatchMapping("/{content_uuid}")
     @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> modifyContent(@Parameter(name = "content_id", description = "게시글 번호")
+    public ResponseEntity<?> modifyContent(@Parameter(name = "content_uuid", description = "게시글 uuid")
                                            @PathVariable(name = "content_uuid") String uuid,
                                            @Valid @RequestBody PostContentReq req,
                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -113,11 +113,11 @@ public class ContentController {
 
     // DELETE
     @Operation(summary = "게시글 1개 삭제", description = "soft delete로 복구할 수 있도록 설정")
-    @DeleteMapping("/{content_id}")
-    @PreAuthorize("isAuthenticated() && @authManager.isContentAuthor(#contentId, authentication.getPrincipal())")
-    public ResponseEntity<?> deleteContent(@Parameter(name = "content_id", description = "게시글 번호")
-                                           @PathVariable(name = "content_id") Long contentId) {
-        contentService.deleteContent(contentId);
+    @DeleteMapping("/{content_uuid}")
+    @PreAuthorize("isAuthenticated() && @authManager.isContentAuthor(#uuid, authentication.getPrincipal())")
+    public ResponseEntity<?> deleteContent(@Parameter(name = "content_uuid", description = "게시글 uuid")
+                                           @PathVariable(name = "content_uuid") String uuid) {
+        contentService.deleteContent(uuid);
         return ResponseEntity.ok().body(SuccessResponse.noContent());
     }
 }

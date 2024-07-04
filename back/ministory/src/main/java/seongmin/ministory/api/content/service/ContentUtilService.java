@@ -38,6 +38,10 @@ public class ContentUtilService {
         return contentRepository.existsByIdAndUserId(contentId, userId);
     }
 
+    public boolean existsByUuidAndUserId(String uuid, Long userId) {
+        return contentRepository.existsByUuidAndUserId(UUID.fromString(uuid), userId);
+    }
+
     public List<Content> findRecentContentsWithTags() {
         return contentRepository.findRecentContentsWithTags();
     }
