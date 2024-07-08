@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface TagRepository extends JpaRepository<Tag, Long>, QTagRepository {
     Optional<Tag> findByTagName(String tagName);
 
+    boolean existsByTagName(String tagName);
 }
