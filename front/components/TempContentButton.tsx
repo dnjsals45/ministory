@@ -1,10 +1,11 @@
 import { useRouter } from 'next/navigation'
 
-export default function TempContentButton() {
+export default function TempContentButton({ setOpen }) {
   const router = useRouter()
 
   const handleClick = () => {
     router.push('/manage/temp_contents')
+    setOpen(false)
   }
 
   return (

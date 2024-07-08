@@ -6,7 +6,7 @@ import process from 'process'
 import { RegisterTag } from '@/data/RegisterTag'
 
 const TagContext = createContext({
-  tags: null as RegisterTag[] | null,
+  tags: [] as RegisterTag[],
   contentTags: null as ContentTags | null,
   fetchContentTag: async () => {},
   fetchRegisterTag: async () => {},

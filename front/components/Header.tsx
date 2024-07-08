@@ -59,7 +59,6 @@ const Header = () => {
         {userInfo === null ? <LoginButton /> : <LogoutButton />}
         <SearchButton />
         <ThemeSwitch />
-        {/*<MoreButton />*/}
         {userInfo?.role === 'ROLE_ADMIN' && <MoreButton />}
         <MobileNav />
       </div>
