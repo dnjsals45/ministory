@@ -19,11 +19,11 @@ export default function MyPost({ content, userRole }: LayoutProps) {
   const router = useRouter()
   const dateTime = content.content.createdAt.toString().split('T')[0]
 
-  function handleEditButton(id: number) {
+  function handleEditButton(id: string) {
     router.push(`/blog/edit/${id}`)
   }
 
-  function handleDeleteContentButton(id: number) {
+  function handleDeleteContentButton(id: string) {
     router.push(`/blog/delete/${id}`)
   }
 
@@ -49,7 +49,7 @@ export default function MyPost({ content, userRole }: LayoutProps) {
                 {userRole === 'ROLE_ADMIN' && (
                   <button
                     className="ml-4 rounded-lg bg-blue-500 px-4 py-2 text-white"
-                    onClick={() => handleEditButton(content.content.contentId)}
+                    onClick={() => handleEditButton(content.content.uuid)}
                   >
                     수정
                   </button>
@@ -57,7 +57,7 @@ export default function MyPost({ content, userRole }: LayoutProps) {
                 {userRole === 'ROLE_ADMIN' && (
                   <button
                     className="ml-2 rounded-lg bg-red-500 px-4 py-2 text-white"
-                    onClick={() => handleDeleteContentButton(content.content.contentId)}
+                    onClick={() => handleDeleteContentButton(content.content.uuid)}
                   >
                     삭제
                   </button>

@@ -3,18 +3,27 @@
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
 import dynamic from 'next/dynamic'
-import { Button, TextField } from '@mui/material'
+import {
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from '@mui/material'
 import { TagContext } from '@/components/hooks/useTag'
 import { ContentDetail } from '@/data/ContentDetail'
 import process from 'process'
 import { useRouter } from 'next/navigation'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 const MyEditorWithNoSSR = dynamic(() => import('@/components/MyEditor'), {
   ssr: false,
 })
 
-async function fetchContentData(id: number): Promise<{ data: ContentDetail }> {
+async function fetchContentData(id: string): Promise<{ data: ContentDetail }> {
   const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`, {
     method: 'GET',
     headers: {
@@ -33,26 +42,40 @@ export default function EditContent(props) {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const { accessToken, setAccessToken } = useContext(AuthContext)
   const { tags, fetchContentTag, fetchRegisterTag } = useContext(TagContext)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [openDialog, setOpenDialog] = useState<boolean>(false)
+  const [newTag, setNewTag] = useState<string>('')
+  const [tagOptions, setTagOptions] = useState<string[]>([
+    '+ 태그 추가',
+    ...tags.map((tag) => tag.tagName),
+  ])
 
   useEffect(() => {
-    const contentData = async (id: number) => {
+    const contentData = async (id: string) => {
       const response = await fetchContentData(id)
       setDetail(response.data)
       setTitle(response.data.content.title)
+      setSelectedTags(response.data.content.tags.map((tag) => tag.tagName))
       setBody(response.data.content.body)
+      setLoading(true)
     }
 
     contentData(id)
-  }, [])
+  }, [loading])
+
+  useEffect(() => {
+    setTagOptions(['+ 태그 추가', ...tags.map((tag) => tag.tagName)])
+  }, [tags])
 
   const handleEditComplete = async () => {
     const content = {
       title: title,
       body: body,
       complete: true,
+      tags: selectedTags,
     }
 
-    const contentResponse = await fetchWithCredentials(
+    const contentResponse = await fetchWithAuthorization(
       process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
       'PATCH',
       accessToken,
@@ -64,25 +87,40 @@ export default function EditContent(props) {
       newAccessToken && setAccessToken(newAccessToken)
     }
 
-    const tagResponse = await fetchWithCredentials(
-      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/tags`,
-      'POST',
-      accessToken,
-      { tags: selectedTags }
-    )
-
-    if (tagResponse.headers.has('Access-Token')) {
-      const newAccessToken = tagResponse.headers.get('Access-Token')
-      newAccessToken && setAccessToken(newAccessToken)
-    }
-
-    if (contentResponse.ok && tagResponse.ok) {
+    if (contentResponse.ok) {
       alert('게시글 수정 성공!')
-      fetchContentTag()
-      fetchRegisterTag()
+      await fetchContentTag()
+      await fetchRegisterTag()
       router.push('/blog')
     } else {
       alert('게시글 수정 실패....')
+    }
+  }
+
+  const handleEditTemp = async () => {
+    const content = {
+      title: title,
+      body: body,
+      complete: false,
+      tags: selectedTags,
+    }
+
+    const contentResponse = await fetchWithAuthorization(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
+      'PATCH',
+      accessToken,
+      content
+    )
+
+    if (contentResponse.headers.has('Access-Token')) {
+      const newAccessToken = contentResponse.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
+
+    if (contentResponse.ok) {
+      alert('게시글 임시저장 성공!')
+    } else {
+      alert('게시글 임시저장 실패....')
     }
   }
 
@@ -94,17 +132,38 @@ export default function EditContent(props) {
     setBody(contentHtml)
   }
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptionValue = event.target.value
-
-    if (selectedOptionValue === 'none') {
-      setSelectedTags([])
+  const handleTagsChange = (event, newValue) => {
+    if (newValue.includes('+ 태그 추가')) {
+      setOpenDialog(true)
       return
     }
-    if (selectedTags.includes(selectedOptionValue)) {
-      setSelectedTags(selectedTags.filter((tag) => tag !== selectedOptionValue))
-    } else {
-      setSelectedTags([...selectedTags, selectedOptionValue])
+    setSelectedTags(newValue)
+  }
+
+  const handleAddTag = async () => {
+    if (newTag) {
+      const registerTagResponse = await fetchWithAuthorization(
+        process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/tags/register`,
+        'POST',
+        accessToken,
+        { tagName: newTag }
+      )
+
+      if (registerTagResponse.headers.has('Access-Token')) {
+        const newAccessToken = registerTagResponse.headers.get('Access-Token')
+        newAccessToken && setAccessToken(newAccessToken)
+      }
+
+      if (registerTagResponse.ok) {
+        alert('새로운 태그 등록 성공')
+        setTagOptions((prevTagOptions) => [...prevTagOptions, newTag])
+        setSelectedTags([...selectedTags, newTag])
+        setNewTag('')
+        setOpenDialog(false)
+        await fetchRegisterTag()
+      } else {
+        alert('새로운 태그 등록 실패')
+      }
     }
   }
 
@@ -125,28 +184,53 @@ export default function EditContent(props) {
           </div>
           <div className={'my-10'}>
             <div>태그 선택:</div>
-            <select
-              value={selectedTags[0]}
-              onChange={handleSelectChange}
-              className="dropdown-class"
-            >
-              <option value="none">선택하지 않음</option>
-              {tags?.map((t) => (
-                <option key={t.tagName} value={t.tagName}>
-                  {t.tagName}
-                </option>
-              ))}
-            </select>
+            <Autocomplete
+              multiple
+              id="tags"
+              options={tagOptions}
+              getOptionLabel={(option) => option}
+              value={selectedTags}
+              onChange={handleTagsChange}
+              renderInput={(params) => (
+                <TextField {...params} variant="standard" placeholder="태그를 선택하세요" />
+              )}
+            />
             {selectedTags.length > 0 && (
               <div className="selected-tags">
                 선택한 태그: <strong>{selectedTags.join(', ')}</strong>
               </div>
             )}
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+              <DialogTitle>새 태그 추가</DialogTitle>
+              <DialogContent>
+                <DialogContentText>새로 생성할 태그를 입력해주세요.</DialogContentText>
+                <TextField
+                  /* eslint-disable-next-line jsx-a11y/no-autofocus */
+                  autoFocus
+                  required
+                  margin="dense"
+                  label="태그명"
+                  type="text"
+                  fullWidth
+                  variant="standard"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenDialog(false)}>취소</Button>
+                <Button onClick={handleAddTag}>추가</Button>
+              </DialogActions>
+            </Dialog>
           </div>
           <div>
-            <MyEditorWithNoSSR onChangeContent={handleBodyChange} initialValue={body} />
+            {loading && (
+              <MyEditorWithNoSSR onChangeContent={handleBodyChange} initialValue={body} />
+            )}
           </div>
           <Button onClick={handleEditComplete}>수정하기</Button>
+          <Button onClick={handleEditTemp}>임시저장</Button>
         </div>
       }
     </div>

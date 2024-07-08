@@ -7,12 +7,12 @@ import Comments from '@/components/Comments'
 import CommentInput from '@/components/CommentInput'
 import process from 'process'
 import { AuthContext } from '@/components/hooks/useAuth'
-import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithoutAuthorization } from '@/components/hooks/CustomFetch'
 
 const Layout = MyPost
 
 async function fetchContentData(id: number): Promise<{ data: ContentDetail }> {
-  const data = await fetchWithoutCredentials(
+  const data = await fetchWithoutAuthorization(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
     'GET'
   )

@@ -21,6 +21,7 @@ public class TagService {
     }
 
     public void registerTag(RegisterTagReq req) {
+        tagUtilService.isExist(req.getTagName());
         tagUtilService.saveTag(req.getTagName());
     }
 

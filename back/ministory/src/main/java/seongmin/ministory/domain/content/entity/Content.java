@@ -9,6 +9,7 @@ import seongmin.ministory.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "CONTENT")
@@ -30,10 +31,14 @@ public class Content extends Auditing {
     @OneToMany(mappedBy = "content")
     private List<ContentTag> contentTags = new ArrayList<>();
 
+    @Column(name = "uuid", nullable = false, unique = true, columnDefinition = "BINARY(16)")
+    private UUID uuid;
+
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "body", length = 2000)
+    @Lob // varchar(2)가 아닌 MEDIUMTEXT 형식으로 저장
+    @Column(name = "body")
     private String body;
 
     @Column(name = "complete", nullable = false)

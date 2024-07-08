@@ -2,7 +2,7 @@ import Image from './Image'
 import Link from './Link'
 
 const RecentPostCard = ({ data }) => {
-  const href: string = '/blog/' + data.content.contentId
+  const href: string = '/blog/' + data.content.uuid
   const imgSrc = ''
 
   return (

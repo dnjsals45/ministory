@@ -11,6 +11,7 @@ import seongmin.ministory.domain.content.entity.Content;
 import seongmin.ministory.domain.content.repository.ContentRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,11 @@ public class ContentUtilService {
                 .orElseThrow(() -> new ContentErrorException(ContentErrorCode.INVALID_CONTENT_ID));
     }
 
+    public Content findByUUID(String uuid) {
+        return contentRepository.findByUuid(UUID.fromString(uuid))
+                .orElseThrow(() -> new ContentErrorException(ContentErrorCode.INVALID_CONTENT_ID));
+    }
+
     public Content save(Content content) {
         contentRepository.save(content);
 
@@ -30,6 +36,10 @@ public class ContentUtilService {
 
     public boolean existsByIdAndUserId(Long contentId, Long userId) {
         return contentRepository.existsByIdAndUserId(contentId, userId);
+    }
+
+    public boolean existsByUuidAndUserId(String uuid, Long userId) {
+        return contentRepository.existsByUuidAndUserId(UUID.fromString(uuid), userId);
     }
 
     public List<Content> findRecentContentsWithTags() {
@@ -46,5 +56,9 @@ public class ContentUtilService {
 
     public Long countAllContents() {
         return contentRepository.countAllByCompleteIsTrue();
+    }
+
+    public List<Content> findTempContents() {
+        return contentRepository.findAllByCompleteIsFalseAndDeletedAtIsNull();
     }
 }

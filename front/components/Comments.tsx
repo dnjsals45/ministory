@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { CommentItem } from '@/data/CommentItem'
 import { Divider, List, ListItem, ListItemText } from '@mui/material'
 import process from 'process'
-import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithoutAuthorization } from '@/components/hooks/CustomFetch'
 
 async function fetchComment(id: number): Promise<{ data: CommentItem[] }> {
-  const response = await fetchWithoutCredentials(
+  const response = await fetchWithoutAuthorization(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}/comments`,
     'GET'
   )

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import process from 'process'
 import { useContext, useEffect } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 export default function DeleteContent(props) {
   const id = props.params.id
@@ -13,7 +13,7 @@ export default function DeleteContent(props) {
 
   useEffect(() => {
     const deleteContent = async () => {
-      const response = await fetchWithCredentials(
+      const response = await fetchWithAuthorization(
         process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${id}`,
         'DELETE',
         accessToken

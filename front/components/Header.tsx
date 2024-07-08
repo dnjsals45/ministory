@@ -6,16 +6,14 @@ import Logo from '@/data/logo.svg'
 import Link from './Link'
 import MobileNav from './MobileNav'
 import ThemeSwitch from './ThemeSwitch'
-import SearchButton from './SearchButton'
 import WriteButton from '@/components/WriteButton'
 import { useContext } from 'react'
 import { AuthContext } from '@/components/hooks/useAuth'
 import LogoutButton from '@/components/LogoutButton'
 import LoginButton from '@/components/LoginButton'
-import { TagContext } from '@/components/hooks/useTag'
-import { router } from 'next/client'
-import { useRouter } from 'next/navigation'
 import { SearchContext } from '@/components/hooks/useSearch'
+import MoreButton from '@/components/MoreButton'
+import SearchButton from '@/components/SearchButton'
 
 const Header = () => {
   const { setKeyword, setNowTag } = useContext(SearchContext)
@@ -61,6 +59,7 @@ const Header = () => {
         {userInfo === null ? <LoginButton /> : <LogoutButton />}
         <SearchButton />
         <ThemeSwitch />
+        {userInfo?.role === 'ROLE_ADMIN' && <MoreButton />}
         <MobileNav />
       </div>
     </header>

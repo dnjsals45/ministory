@@ -36,6 +36,7 @@ export default function Home() {
           </div>
           <div className="container py-12">
             <div className="-m-4 flex flex-wrap">
+              {contents.length === 0 && 'No Posts'}
               {contents.map((content, index) => (
                 <RecentPostCard key={index} data={content} />
               ))}

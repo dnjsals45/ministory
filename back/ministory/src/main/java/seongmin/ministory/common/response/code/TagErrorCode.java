@@ -14,7 +14,7 @@ public enum TagErrorCode implements StatusCode {
      * 400 BAD_REQUEST
      */
     INVALID_TAG(BAD_REQUEST, "존재하지 않는 태그입니다."),
-    ;
+    EXIST_TAG(BAD_REQUEST, "이미 존재하는 태그입니다." );
 
     private final HttpStatus httpStatus;
     private final String message;

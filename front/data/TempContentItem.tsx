@@ -17,8 +17,7 @@ interface User {
   nickname: string
 }
 
-export interface ContentItem {
+export interface TempContentItem {
   content: Content
   user: User
-  totalPage: number
 }
