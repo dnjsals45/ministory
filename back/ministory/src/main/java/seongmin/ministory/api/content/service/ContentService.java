@@ -64,7 +64,7 @@ public class ContentService {
 
         contentUtilService.save(newContent);
 
-        contentTagService.addContentTag(newContent, req.getTags());
+        contentTagService.modifyContentTag(newContent, req.getTags());
 
         return CreateContentRes.builder()
                 .contentId(newContent.getId())
@@ -76,20 +76,25 @@ public class ContentService {
 //            @CacheEvict(value = "tempContents", allEntries = true),
 //            @CacheEvict(value = "recentContents", condition = "#req.getComplete == true", allEntries = true)
 //    })
+    @Transactional
     public PostContentRes modifyContent(String uuid, PostContentReq req) {
 
         Content content = contentUtilService.findByUUID(uuid);
 
         contentUtilService.save(content.update(req.getTitle(), req.getBody(), req.getComplete()));
+        contentTagService.modifyContentTag(content, req.getTags());
 
         return PostContentRes.of(content.getId(), content.getUuid().toString(), content.getUpdatedAt());
     }
 
+    @Transactional
     public void deleteContent(String uuid) {
         Content content = contentUtilService.findByUUID(uuid);
 
         content.softDelete();
         contentUtilService.save(content);
+
+        contentTagService.deleteAllContentTagWithContentId(content.getId());
     }
 
     @Transactional(readOnly = true)
