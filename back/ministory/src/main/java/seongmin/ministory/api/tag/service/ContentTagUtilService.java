@@ -29,4 +29,8 @@ public class ContentTagUtilService {
     public boolean existByContentIdAndTagId(Long contentId, Long tagId) {
         return contentTagRepository.existsByContentIdAndTagId(contentId, tagId);
     }
+
+    public void deleteAllByContentId(Long id) {
+        contentTagRepository.deleteAllByContentId(id);
+    }
 }

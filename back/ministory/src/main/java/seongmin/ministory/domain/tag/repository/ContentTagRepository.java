@@ -14,4 +14,6 @@ public interface ContentTagRepository extends JpaRepository<ContentTag, Long> {
     Optional<ContentTag> findByContentIdAndTagId(Long contentId, Long tagId);
 
     boolean existsByContentIdAndTagId(Long contentId, Long tagId);
+
+    void deleteAllByContentId(Long id);
 }

@@ -29,21 +29,26 @@ public class ContentTagService {
         return GetAllContentTagsRes.from(contentTags);
     }
 
-    public void addContentTag(Content content, List<String> tags) {
+    public void modifyContentTag(Content content, List<String> tags) {
+        List<ContentTag> contentTags = contentTagUtilService.findAllByContentId(content.getId());
+
+        for (ContentTag contentTag : contentTags) {
+            Tag tag = contentTag.getTag();
+            if (!tags.contains(tag.getTagName())) {
+                contentTagUtilService.deleteByContentIdAndTagId(content.getId(), tag.getId());
+            } else {
+                tags.remove(tag.getTagName());
+            }
+        }
+
         if (tags == null || tags.isEmpty()) {
             return;
         }
 
         for (String tagName : tags) {
-            log.warn("tag: {}", tagName);
             Tag tag = tagUtilService.findByTagName(tagName);
             if (tag == null) {
                 throw new IllegalArgumentException("일치하는 태그가 없습니다");
-            }
-
-            if (contentTagUtilService.existByContentIdAndTagId(content.getId(), tag.getId())) {
-                log.warn("이미 등록된 태그, content: {}, tag: {}", content.getId(), tag.getId());
-                continue;
             }
 
             ContentTag newContentTag = ContentTag.builder()
@@ -60,5 +65,9 @@ public class ContentTagService {
         contentUtilService.findById(contentId);
         Tag tag = tagUtilService.findByTagName(req.getTagName());
         contentTagUtilService.deleteByContentIdAndTagId(contentId, tag.getId());
+    }
+
+    public void deleteAllContentTagWithContentId(Long id) {
+        contentTagUtilService.deleteAllByContentId(id);
     }
 }
