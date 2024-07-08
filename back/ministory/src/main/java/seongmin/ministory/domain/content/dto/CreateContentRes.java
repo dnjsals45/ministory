@@ -1,12 +1,12 @@
 package seongmin.ministory.domain.content.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-@AllArgsConstructor
-@Getter
 @Builder
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateContentRes {
     private Long contentId;
+    private String uuid;
 }

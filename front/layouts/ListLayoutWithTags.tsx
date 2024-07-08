@@ -4,13 +4,12 @@
 import { usePathname, useSearchParams } from 'next/navigation'
 import { formatDate } from 'pliny/utils/formatDate'
 import Link from '@/components/Link'
-import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { ContentItem } from '@/data/ContentItem'
 import { useContext, useEffect, useState } from 'react'
 import { TagContext } from '@/components/hooks/useTag'
 import process from 'process'
-import { fetchWithoutCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithoutAuthorization } from '@/components/hooks/CustomFetch'
 import { SearchContext } from '@/components/hooks/useSearch'
 
 interface PaginationProps {
@@ -78,7 +77,7 @@ export async function fetchContentsData(
     queryParams.append('tag', tag.toString())
   }
 
-  const response = await fetchWithoutCredentials(
+  const response = await fetchWithoutAuthorization(
     process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents?${queryParams.toString()}`,
     'GET'
   )
@@ -170,7 +169,7 @@ export default function ListLayoutWithTags({ title }: ListLayoutProps) {
                         <div>
                           <h2 className="text-2xl font-bold leading-8 tracking-tight">
                             <Link
-                              href={`/blog/${content.contentId}`}
+                              href={`/blog/${content.uuid}`}
                               className="text-gray-900 hover:text-gray-500 dark:text-gray-100"
                             >
                               {content.title}

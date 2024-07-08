@@ -25,17 +25,21 @@ public class TagUtilService {
     }
 
     public void saveTag(String tagName) {
-        Tag tag = this.findByTagName(tagName);
-        if (tag == null) {
-            Tag newTag = Tag.builder()
-                    .tagName(tagName)
-                    .build();
+        Tag newTag = Tag.builder()
+                .tagName(tagName)
+                .build();
 
-            tagRepository.save(newTag);
-        }
+        tagRepository.save(newTag);
     }
 
     public List<CountTagDto> countTags() {
         return tagRepository.countTagsInContents();
+    }
+
+    public void isExist(String tagName) {
+        boolean isExist = tagRepository.existsByTagName(tagName);
+        if (isExist) {
+            throw new TagErrorException(TagErrorCode.EXIST_TAG);
+        }
     }
 }

@@ -30,37 +30,6 @@ public class QContentRepositoryImpl implements QContentRepository {
     QTag tag = QTag.tag;
 
     @Override
-    public Page<Content> findContentsPage(Pageable pageable) {
-        List<Long> contentIds = jpaQueryFactory
-                .select(content.id)
-                .from(content)
-                .where(content.deletedAt.isNull().and(content.complete.isTrue()))
-                .orderBy(content.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        List<Content> contents = jpaQueryFactory
-                .selectFrom(content)
-                .leftJoin(content.contentTags, contentTag).fetchJoin()
-                .where(content.id.in(contentIds))
-                .orderBy(content.createdAt.desc())
-                .fetch();
-
-        Long totalCount = jpaQueryFactory
-                .select(content.count())
-                .from(content)
-                .where(content.deletedAt.isNull().and(content.complete.isTrue()))
-                .fetchOne();
-
-        if (totalCount == null) {
-            throw new NullPointerException();
-        }
-
-        return new PageImpl<>(contents, pageable, totalCount);
-    }
-
-    @Override
     public List<Content> findRecentContentsWithTags() {
         List<Long> contentIds = jpaQueryFactory
                 .select(content.id)

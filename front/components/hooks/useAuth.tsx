@@ -3,7 +3,7 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { UserInfo } from '@/data/UserInfo'
 import process from 'process'
-import { fetchWithCredentials } from '@/components/hooks/CustomFetch'
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
 const AuthContext = createContext({
   accessToken: '',
@@ -17,7 +17,7 @@ interface Props {
   children: ReactNode | ReactNode[]
 }
 export async function fetchUserInfo(accessToken: string): Promise<{ data: UserInfo }> {
-  const response = await fetchWithCredentials(
+  const response = await fetchWithAuthorization(
     process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/users',
     'GET',
     accessToken

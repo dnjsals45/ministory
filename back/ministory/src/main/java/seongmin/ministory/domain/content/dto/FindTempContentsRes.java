@@ -11,21 +11,18 @@ import seongmin.ministory.domain.content.entity.Content;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Getter
 @Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AllContentsRes {
+public class FindTempContentsRes {
     private List<GetContentRes> contents;
-    private int totalPage;
 
-    public static AllContentsRes from(List<Content> contents, int totalPage) {
+    public static FindTempContentsRes from(List<Content> contents) {
         Parser parser = Parser.builder().build();
         HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
-        AllContentsRes response = AllContentsRes.builder()
+        FindTempContentsRes response = FindTempContentsRes.builder()
                 .contents(new ArrayList<>())
-                .totalPage(totalPage)
                 .build();
 
         for (Content content : contents) {
@@ -37,5 +34,4 @@ public class AllContentsRes {
 
         return response;
     }
-
 }

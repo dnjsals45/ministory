@@ -1,13 +1,12 @@
 package seongmin.ministory.domain.tag.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import seongmin.ministory.domain.tag.entity.ContentTag;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContentTagDto {
     private String tagName;
 

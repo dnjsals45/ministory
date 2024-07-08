@@ -1,6 +1,7 @@
 package seongmin.ministory.api.tag.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import seongmin.ministory.api.content.service.ContentUtilService;
@@ -15,30 +16,41 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ContentTagService {
     private final ContentUtilService contentUtilService;
     private final ContentTagUtilService contentTagUtilService;
     private final TagUtilService tagUtilService;
 
-    public GetAllContentTagsRes getContentTags(Long contentId) {
-        contentUtilService.findById(contentId);
-        List<ContentTag> contentTags = contentTagUtilService.findAllByContentId(contentId);
+    public GetAllContentTagsRes getContentTags(String uuid) {
+        Content content = contentUtilService.findByUUID(uuid);
+        List<ContentTag> contentTags = contentTagUtilService.findAllByContentId(content.getId());
 
         return GetAllContentTagsRes.from(contentTags);
     }
 
-    public void addContentTag(Long contentId, SetContentTagReq req) {
-        Content content = contentUtilService.findById(contentId);
+    public void modifyContentTag(Content content, List<String> tags) {
+        List<ContentTag> contentTags = contentTagUtilService.findAllByContentId(content.getId());
 
-        List<String> tags = req.getTags();
-        if (tags.isEmpty()) {
+        for (ContentTag contentTag : contentTags) {
+            Tag tag = contentTag.getTag();
+            if (!tags.contains(tag.getTagName())) {
+                contentTagUtilService.deleteByContentIdAndTagId(content.getId(), tag.getId());
+            } else {
+                tags.remove(tag.getTagName());
+            }
+        }
+
+        if (tags == null || tags.isEmpty()) {
             return;
         }
+
         for (String tagName : tags) {
             Tag tag = tagUtilService.findByTagName(tagName);
             if (tag == null) {
                 throw new IllegalArgumentException("일치하는 태그가 없습니다");
             }
+
             ContentTag newContentTag = ContentTag.builder()
                     .content(content)
                     .tag(tag)
@@ -53,5 +65,9 @@ public class ContentTagService {
         contentUtilService.findById(contentId);
         Tag tag = tagUtilService.findByTagName(req.getTagName());
         contentTagUtilService.deleteByContentIdAndTagId(contentId, tag.getId());
+    }
+
+    public void deleteAllContentTagWithContentId(Long id) {
+        contentTagUtilService.deleteAllByContentId(id);
     }
 }

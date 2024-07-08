@@ -12,8 +12,8 @@ public class AuthManager {
     private final ContentUtilService contentUtilService;
     private final CommentUtilService commentUtilService;
 
-    public boolean isContentAuthor(Long contentId, CustomUserDetails userDetails) {
-        return contentUtilService.existsByIdAndUserId(contentId, userDetails.getUserId());
+    public boolean isContentAuthor(String uuid, CustomUserDetails userDetails) {
+        return contentUtilService.existsByUuidAndUserId(uuid, userDetails.getUserId());
     }
 
     public boolean isCommentAuthor(Long commentId, CustomUserDetails userDetails) {

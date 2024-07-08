@@ -1,8 +1,6 @@
 package seongmin.ministory.domain.tag.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import seongmin.ministory.domain.tag.entity.ContentTag;
 
 import java.util.ArrayList;
@@ -11,6 +9,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetAllContentTagsRes {
     List<ContentTagDto> tags;
 

@@ -21,18 +21,18 @@ public class ContentTagController {
     @Operation(summary = "게시글 태그 조회", description = "게시글 1개에 등록된 태그 모두 반환")
     @GetMapping("")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<?> getContentTags(@PathVariable(name = "content_id") Long contentId) {
-        return ResponseEntity.ok().body(SuccessResponse.from(contentTagService.getContentTags(contentId)));
+    public ResponseEntity<?> getContentTags(@PathVariable(name = "content_id") String uuid) {
+        return ResponseEntity.ok().body(SuccessResponse.from(contentTagService.getContentTags(uuid)));
     }
 
-    @Operation(summary = "게시글 태그 등록", description = "게시글 1개에 태그 등록")
-    @PostMapping("")
-    @PreAuthorize("isAuthenticated() && @authManager.isContentAuthor(#contentId, authentication.getPrincipal())")
-    public ResponseEntity<?> setContentTag(@PathVariable(name = "content_id") Long contentId,
-                                           @RequestBody SetContentTagReq req) {
-        contentTagService.addContentTag(contentId, req);
-        return ResponseEntity.ok().body(SuccessResponse.noContent());
-    }
+//    @Operation(summary = "게시글 태그 등록", description = "게시글 1개에 태그 등록")
+//    @PostMapping("")
+//    @PreAuthorize("isAuthenticated() && @authManager.isContentAuthor(#uuid, authentication.getPrincipal())")
+//    public ResponseEntity<?> setContentTag(@PathVariable(name = "content_id") String uuid,
+//                                           @RequestBody SetContentTagReq req) {
+//        contentTagService.addContentTag(uuid, req);
+//        return ResponseEntity.ok().body(SuccessResponse.noContent());
+//    }
 
     @Operation(summary = "게시글 태그 해제", description = "게시글에 등록되어 있는 태그 해제")
     @PostMapping("/delete")
