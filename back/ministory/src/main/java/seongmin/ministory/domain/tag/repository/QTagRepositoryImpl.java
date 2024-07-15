@@ -27,6 +27,7 @@ public class QTagRepositoryImpl implements QTagRepository {
                         contentTag.content.id.countDistinct()))
                 .from(contentTag)
                 .join(contentTag.tag, tag)
+                .where(contentTag.content.complete.isTrue())
                 .groupBy(tag.tagName)
                 .fetch();
     }
