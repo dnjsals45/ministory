@@ -12,7 +12,7 @@ public interface ContentRepository extends JpaRepository<Content, Long>, QConten
 
     List<Content> findAllByCompleteIsFalseAndDeletedAtIsNull();
 
-    Long countAllByCompleteIsTrue();
+    Long countAllByCompleteIsTrueAndDeletedAtIsNull();
 
     Optional<Content> findByUuid(UUID uuid);
 
