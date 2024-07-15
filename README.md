@@ -10,8 +10,7 @@
 1인 블로그 개발 프로젝트
 
 기간 : 2024/02/21 ~ 2024/04/22 배포 완료
-
-블로그 주소 : https://dev-min.me
+배포 주소 : https://dev-min.me
 
 # 개발하며 작성한 블로그 기록
 - [프로젝트 구상](https://seongminlife.tistory.com/29)
