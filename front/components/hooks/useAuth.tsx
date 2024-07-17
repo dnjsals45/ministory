@@ -50,7 +50,10 @@ const AuthProvider = ({ children }: Props) => {
 
   const logout = async () => {
     await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/api/v1/users/logout', {
-      method: 'GET',
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
       credentials: 'include',
     })
 
