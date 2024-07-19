@@ -1,7 +1,7 @@
 package seongmin.ministory.domain.content.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +14,8 @@ import seongmin.ministory.domain.content.entity.QContent;
 import seongmin.ministory.domain.tag.entity.QContentTag;
 import seongmin.ministory.domain.tag.entity.QTag;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,21 +42,24 @@ public class QContentRepositoryImpl implements QContentRepository {
             return jpaQueryFactory
                     .selectFrom(content)
                     .leftJoin(content.contentTags, contentTag).fetchJoin()
+                    .leftJoin(contentTag.tag, tag).fetchJoin()
+                    .join(content.user).fetchJoin()
                     .where(content.id.in(contentIds))
                     .orderBy(content.createdAt.desc())
                     .fetch();
 
         } else {
-            return null;
+            return Collections.emptyList();
         }
 
-//        메모리에서 처리하게 되는 코드(fetchJoin 과 limit 함께 사용) 나중에 많은 건을 조회했을 때 성능차이 비교해보기
+
+//      메모리에서 처리하게 되는 코드(fetchJoin 과 limit 함께 사용) 나중에 많은 건을 조회했을 때 성능차이 비교해보기
 //        return jpaQueryFactory
 //                .selectFrom(content)
 //                .leftJoin(content.contentTags, contentTag).fetchJoin()
 //                .where(content.deletedAt.isNull().and(content.complete.isTrue()))
 //                .orderBy(content.createdAt.desc())
-//                .limit(5)
+//                .limit(9)
 //                .fetch();
     }
 

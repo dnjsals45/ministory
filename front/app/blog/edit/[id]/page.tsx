@@ -226,7 +226,11 @@ export default function EditContent(props) {
           </div>
           <div>
             {loading && (
-              <MyEditorWithNoSSR onChangeContent={handleBodyChange} initialValue={body} />
+              <MyEditorWithNoSSR
+                onChangeContent={handleBodyChange}
+                initialValue={body}
+                accessToken={accessToken}
+              />
             )}
           </div>
           <Button onClick={handleEditComplete}>수정하기</Button>

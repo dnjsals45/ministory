@@ -92,12 +92,6 @@ public class GetContentRes {
     }
 
     public static GetContentRes from(Content content) {
-        List<ContentTagDto> response = new ArrayList<>();
-        List<ContentTag> tags = content.getContentTags();
-        for (ContentTag tag : tags) {
-            response.add(ContentTagDto.from(tag));
-        }
-
         return GetContentRes.builder()
                 .content(ResContent.from(content))
                 .user(ResUser.from(content.getUser()))

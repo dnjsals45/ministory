@@ -2,6 +2,7 @@ package seongmin.ministory.api.tag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import seongmin.ministory.api.content.service.ContentUtilService;
 import seongmin.ministory.domain.tag.dto.*;
 import seongmin.ministory.domain.tag.entity.Tag;
@@ -20,6 +21,7 @@ public class TagService {
         return AllTagsRes.from(tags);
     }
 
+    @Transactional
     public void registerTag(RegisterTagReq req) {
         tagUtilService.isExist(req.getTagName());
         tagUtilService.saveTag(req.getTagName());

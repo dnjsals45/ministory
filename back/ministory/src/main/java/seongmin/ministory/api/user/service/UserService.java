@@ -1,17 +1,20 @@
 package seongmin.ministory.api.user.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import seongmin.ministory.common.auth.dto.CustomUserDetails;
+import seongmin.ministory.common.jwt.ForbiddenToken.service.ForbiddenTokenService;
 import seongmin.ministory.common.jwt.dto.JwtTokenInfo;
+import seongmin.ministory.common.response.code.AuthErrorCode;
 import seongmin.ministory.domain.user.dto.UserInfoRes;
 import seongmin.ministory.domain.user.entity.User;
 import seongmin.ministory.domain.user.repository.UserRepository;
@@ -23,12 +26,15 @@ import java.util.Map;
 public class UserService {
     private final UserUtilService userUtilService;
     private final UserRepository userRepository;
+    private final ForbiddenTokenService forbiddenTokenService;
     private final String githubClientId;
     private final String githubClientSecret;
     private final String githubRedirectUri;
     private final String googleClientId;
     private final String googleClientSecret;
     private final String googleRedirectUri;
+    private final Long accessTokenExpiration;
+    private final Long refreshTokenExpiration;
 
     public UserService(@Value("${spring.security.oauth2.client.registration.github.client-id}") String githubClientId,
                        @Value("${spring.security.oauth2.client.registration.github.client-secret}") String githubClientSecret,
@@ -36,8 +42,11 @@ public class UserService {
                        @Value("${spring.security.oauth2.client.registration.google.client-id}") String googleClientId,
                        @Value("${spring.security.oauth2.client.registration.google.client-secret}") String googleClientSecret,
                        @Value("${spring.security.oauth2.client.registration.google.redirect-uri}") String googleRedirectUri,
+                       @Value("${jwt.token.access-expiration}") Long accessTokenExpiration,
+                       @Value("${jwt.token.refresh-expiration}") Long refreshTokenExpiration,
                        UserRepository userRepository,
-                       UserUtilService userUtilService) {
+                       UserUtilService userUtilService,
+                       ForbiddenTokenService forbiddenTokenService) {
         this.userUtilService = userUtilService;
         this.githubClientId = githubClientId;
         this.githubClientSecret = githubClientSecret;
@@ -45,7 +54,10 @@ public class UserService {
         this.googleClientId = googleClientId;
         this.googleClientSecret = googleClientSecret;
         this.googleRedirectUri = googleRedirectUri;
+        this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshTokenExpiration = refreshTokenExpiration;
         this.userRepository = userRepository;
+        this.forbiddenTokenService = forbiddenTokenService;
     }
 
     public String getCode(String provider) {
@@ -214,5 +226,51 @@ public class UserService {
         User user = userUtilService.findById(userDetails.getUserId());
 
         return UserInfoRes.from(user);
+    }
+
+    public void userLogout(HttpServletRequest request, HttpServletResponse response) {
+        String accessForbidden = findAccessToken(request);
+        String refreshForbidden = findRefreshToken(request);
+
+        if (accessForbidden != null) {
+            forbiddenTokenService.save(accessForbidden, accessTokenExpiration);
+        }
+
+        if (refreshForbidden != null) {
+            forbiddenTokenService.save(refreshForbidden, refreshTokenExpiration);
+        }
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .secure(true)
+                .sameSite("None")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+
+    private String findAccessToken(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer ")) {
+            return accessToken.substring(7);
+        }
+        return null;
+    }
+
+    private String findRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Refresh-Token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
     }
 }

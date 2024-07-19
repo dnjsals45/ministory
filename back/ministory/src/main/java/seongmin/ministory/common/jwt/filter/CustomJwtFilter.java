@@ -73,6 +73,10 @@ public class CustomJwtFilter extends OncePerRequestFilter {
         try {
             String accessToken = resolveAccessToken(request);
 
+            if (forbiddenTokenService.isExist(accessToken)) {
+                handleAuthErrorException(AuthErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 토큰입니다.");
+            }
+
             CustomUserDetails userDetails = (CustomUserDetails) getUserDetails(accessToken);
             setAuthenticationUser(userDetails, request);
         } catch (ExpiredJwtException e1) {
