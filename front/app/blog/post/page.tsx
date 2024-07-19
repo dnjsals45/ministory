@@ -204,7 +204,11 @@ export default function NewPost() {
         </Dialog>
       </div>
       <div>
-        <MyEditorWithNoSSR onChangeContent={handleBodyChange} initialValue={''} />
+        <MyEditorWithNoSSR
+          onChangeContent={handleBodyChange}
+          initialValue={''}
+          accessToken={accessToken}
+        />
       </div>
       <Button onClick={handleComplete}>글 생성</Button>
       <Button onClick={handleTemporary}>임시저장</Button>

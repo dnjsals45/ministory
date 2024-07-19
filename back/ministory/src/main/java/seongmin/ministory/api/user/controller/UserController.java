@@ -107,32 +107,9 @@ public class UserController {
     }
 
     @Operation(summary = "로그아웃", description = "쿠키 무효화")
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logOut(HttpServletRequest request, HttpServletResponse response) {
-
-        String forbidden = null;
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("Refresh-Token".equals(cookie.getName())) {
-                    forbidden = cookie.getValue();
-                }
-            }
-        }
-
-        forbiddenTokenService.save(forbidden);
-
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("Refresh-Token", "")
-                .httpOnly(true)
-                .path("/")
-                .maxAge(0)
-                .secure(true)
-                .sameSite("None")
-                .build();
-
-
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        userService.userLogout(request, response);
 
         return ResponseEntity.ok().body(SuccessResponse.noContent());
     }

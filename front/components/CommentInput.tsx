@@ -17,27 +17,32 @@ export default function CommentInput({ contentId, onCommentAdded }) {
       comment: comment,
     }
 
-    try {
-      const response = await fetchWithAuthorization(
-        process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${contentId}/comments`,
-        'POST',
-        accessToken,
-        data
-      )
+    if (comment === '') {
+      alert('댓글 내용을 입력해주세요')
+      return
+    }
 
-      if (response.headers.has('Access-Token')) {
-        const newAccessToken = response.headers.get('Access-Token')
-        newAccessToken && setAccessToken(newAccessToken)
-      }
+    const response = await fetchWithAuthorization(
+      process.env.NEXT_PUBLIC_BACKEND_URL + `/api/v1/contents/${contentId}/comments`,
+      'POST',
+      accessToken,
+      data
+    )
 
-      if (response.ok) {
-        onCommentAdded()
-        setComment('')
-      } else {
-        alert('로그인을 해야 합니다')
-      }
-    } catch (error) {
-      console.error('댓글 등록 중 오류가 발생했습니다.', error)
+    if (response.headers.has('Access-Token')) {
+      const newAccessToken = response.headers.get('Access-Token')
+      newAccessToken && setAccessToken(newAccessToken)
+    }
+
+    if (response.ok) {
+      onCommentAdded()
+      setComment('')
+    } else if (response.status == 401) {
+      alert('로그인을 해주세요')
+      return
+    } else {
+      alert('댓글 등록 실패(내용이 올바르지 않습니다)')
+      return
     }
   }
 

@@ -8,8 +8,12 @@ import { Editor } from '@toast-ui/react-editor'
 import process from 'process'
 import fieldTypes from 'rehype-citation/node/src/citation-js/plugin-bibtex/input/fieldTypes'
 import title = fieldTypes.title
+import { fetchWithAuthorization } from '@/components/hooks/CustomFetch'
 
-export async function fetchUploadImage(blob): Promise<{ data: { imageUrl: string } }> {
+export async function fetchUploadImage(
+  blob,
+  accessToken: string
+): Promise<{ data: { imageUrl: string } }> {
   const formData = new FormData()
   formData.append('image', blob)
 
@@ -18,12 +22,16 @@ export async function fetchUploadImage(blob): Promise<{ data: { imageUrl: string
     {
       method: 'POST',
       body: formData,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     }
   )
+
   return response.json()
 }
 
-export default function MyEditor({ onChangeContent, initialValue }) {
+export default function MyEditor({ onChangeContent, initialValue, accessToken }) {
   const editorRef = useRef<Editor | null>(null)
   const toolbarItems = [
     ['heading', 'bold', 'italic', 'strike'],
@@ -45,7 +53,7 @@ export default function MyEditor({ onChangeContent, initialValue }) {
   }
 
   const onUploadImage = async (blob, callback) => {
-    await fetchUploadImage(blob).then((response) => {
+    await fetchUploadImage(blob, accessToken).then((response) => {
       callback(response.data.imageUrl, blob.name)
     })
     return false

@@ -93,7 +93,7 @@ public class ContentController {
 
     @Operation(summary = "게시글 이미지 업로드", description = "게시글에 추가되는 이미지를 업로드")
     @PostMapping("/image-upload")
-    @PreAuthorize("isAuthenticated() && #userDetails.getRole() == 'ROLE_ADMIN'")
+    @PreAuthorize("isAuthenticated() && hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> uploadImage(@RequestParam MultipartFile image) throws IOException {
         return ResponseEntity.ok().body(SuccessResponse.from(contentService.uploadImage(image)));
     }

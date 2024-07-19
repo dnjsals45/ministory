@@ -13,18 +13,15 @@ import seongmin.ministory.common.jwt.ForbiddenToken.repository.ForbiddenTokenRep
 public class ForbiddenTokenService {
     private final ForbiddenTokenRepository forbiddenTokenRepository;
 
-    @Value("${jwt.token.refresh-expiration}")
-    private Long expiration;
-
-    public void save(String refreshToken) {
+    public void save(String token, Long expiration) {
         ForbiddenToken forbiddenToken = ForbiddenToken.builder()
-                .token(refreshToken)
+                .token(token)
                 .ttl(expiration / 1000)
                 .build();
         forbiddenTokenRepository.save(forbiddenToken);
     }
 
-    public boolean isExist(String refreshToken) {
-        return forbiddenTokenRepository.existsByToken(refreshToken);
+    public boolean isExist(String token) {
+        return forbiddenTokenRepository.existsByToken(token);
     }
 }

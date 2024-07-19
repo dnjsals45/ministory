@@ -13,13 +13,13 @@ public enum AuthErrorCode implements StatusCode {
     /**
      * 400 BAD_REQUEST
      */
-    EMPTY_ACCESS_TOKEN(BAD_REQUEST, "액세스 토큰이 비어있습니다."),
-    EMPTY_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 비어있습니다."),
     UNKNOWN_PROVIDER(BAD_REQUEST, "알 수 없는 프로바이더입니다."),
 
     /**
      * 401 UNAUTHORIZED
      */
+    EMPTY_ACCESS_TOKEN(UNAUTHORIZED, "액세스 토큰이 비어있습니다."),
+    EMPTY_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 비어있습니다."),
     FAILED_AUTHENTICATION(UNAUTHORIZED, "인증에 실패하였습니다"),
     TAMPERED_ACCESS_TOKEN(UNAUTHORIZED, "서명이 조작된 토큰입니다"),
     EXPIRED_ACCESS_TOKEN(UNAUTHORIZED, "사용기간이 만료된 토큰입니다"),
